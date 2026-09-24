@@ -1,1 +1,1897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080a10">
+    <title>Mel's Tasty Bites | BHHS Canteen</title>
+    <meta name="description" content="Order online from Mel's Tasty Bites at Baulkham Hills High School. Fresh, healthy, and delicious canteen food.">
 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: "#080a10",
+                        panel: "#11141c",
+                        panel2: "#171b25",
+                        brand: "#f04e23", /* Orange from logo */
+                        brandLight: "#ff6b45",
+                        leaf: "#3b963b", /* Green from logo */
+                        gold: "#f4c95d"
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"],
+                        body: ["DM Sans", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+    <!-- STRIPE JS INTEGRATION -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- THREE.JS FOR BACKGROUND -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.min.js"></script>
+
+    <style>
+        :root {
+            --ink: #080a10;
+            --panel: #11141c;
+            --panel-2: #171b25;
+            --line: rgba(255, 255, 255, 0.1);
+            --muted: #8c93a5;
+            --brand: #f04e23;
+            --brand-light: #ff6b45;
+            --leaf: #3b963b;
+            --danger: #ff7070;
+            --success: #72e2a1;
+        }
+
+        * { box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            background: var(--ink);
+        }
+
+        body {
+            min-width: 320px;
+            margin: 0;
+            overflow-x: hidden;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(240, 78, 35, 0.08), transparent 24rem),
+                radial-gradient(circle at 90% 20%, rgba(59, 150, 59, 0.06), transparent 30rem),
+                var(--ink);
+            color: #f8fafc;
+            font-family: "DM Sans", sans-serif;
+        }
+
+        body.modal-open { overflow: hidden; }
+
+        h1, h2, h3, h4, h5, .font-display { font-family: "Space Grotesk", sans-serif; }
+
+        ::selection {
+            color: var(--ink);
+            background: var(--brand);
+        }
+
+        a, button, input, textarea { -webkit-tap-highlight-color: transparent; }
+        button { cursor: pointer; }
+        button:disabled { cursor: not-allowed; }
+
+        .hero {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            min-height: min(820px, 92vh);
+            background-color: var(--ink);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                linear-gradient(to bottom, transparent 60%, var(--ink) 100%),
+                radial-gradient(circle at 70% 30%, rgba(240, 78, 35, 0.12), transparent 22rem);
+        }
+
+        #hero-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            opacity: 0.4;
+            pointer-events: none;
+            transform: translateZ(0); 
+            will-change: transform;
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.08;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 56px 56px;
+        }
+
+        .glass {
+            background: rgba(17, 20, 28, 0.85);
+            border: 1px solid var(--line);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.26);
+            backdrop-filter: blur(12px);
+        }
+
+        .section-kicker {
+            color: var(--brand);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+        }
+
+        .brand-button {
+            color: var(--ink);
+            background: var(--brand);
+            box-shadow: 0 10px 35px rgba(240, 78, 35, 0.25);
+            transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+        }
+
+        .brand-button:hover:not(:disabled) {
+            background: var(--brand-light);
+            box-shadow: 0 16px 45px rgba(240, 78, 35, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .brand-button:disabled {
+            background: #4a5568;
+            box-shadow: none;
+            color: #a0aec0;
+        }
+
+        .ghost-button {
+            color: #f8fafc;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.04);
+            transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+        }
+
+        .ghost-button:hover {
+            border-color: rgba(240, 78, 35, 0.62);
+            background: rgba(240, 78, 35, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .service-card {
+            position: relative;
+            display: flex;
+            min-height: 220px;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            background:
+                linear-gradient(145deg, rgba(255, 255, 255, 0.045), transparent 48%),
+                var(--panel);
+            transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+            border-radius: 12px;
+        }
+
+        .service-card::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -40px;
+            width: 140px;
+            height: 140px;
+            border-radius: 999px;
+            background: rgba(240, 78, 35, 0.08);
+            filter: blur(30px);
+            transition: transform 260ms ease;
+        }
+
+        .service-card:hover {
+            border-color: rgba(240, 78, 35, 0.44);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+            transform: translateY(-4px);
+        }
+
+        .service-card:hover::before { transform: scale(1.7); }
+        .service-card > * { position: relative; z-index: 1; }
+
+        .service-icon {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border: 1px solid rgba(240, 78, 35, 0.2);
+            color: var(--brand);
+            background: rgba(240, 78, 35, 0.08);
+            border-radius: 8px;
+        }
+
+        .service-input, .service-textarea {
+            width: 100%;
+            border: 1px solid var(--line);
+            outline: none;
+            color: #f8fafc;
+            background: var(--panel-2);
+            transition: border-color 180ms ease, box-shadow 180ms ease;
+            border-radius: 6px;
+        }
+
+        .service-input:focus, .service-textarea:focus {
+            border-color: rgba(240, 78, 35, 0.8);
+            box-shadow: 0 0 0 3px rgba(240, 78, 35, 0.15);
+        }
+
+        .service-input[aria-invalid="true"], .service-textarea[aria-invalid="true"] {
+            border-color: rgba(255, 112, 112, 0.9);
+            box-shadow: 0 0 0 3px rgba(255, 112, 112, 0.1);
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: grid;
+            place-items: center;
+            padding: 1rem;
+            isolation: isolate;
+            background: rgba(0, 0, 0, 0.76);
+            backdrop-filter: blur(8px);
+            animation: modal-fade-in 160ms ease both;
+            overscroll-behavior: contain;
+        }
+
+        .modal[hidden] { display: none; }
+        .modal-backdrop { position: absolute; inset: 0; }
+
+        .dialog {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            width: min(100%, 640px);
+            max-height: calc(100dvh - 2rem);
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: var(--panel);
+            box-shadow: 0 30px 120px rgba(0, 0, 0, 0.5);
+            animation: dialog-slide-in 180ms ease both;
+            border-radius: 16px;
+        }
+
+        .dialog-header, .dialog-footer {
+            flex: 0 0 auto;
+            border-color: var(--line);
+            background: rgba(8, 10, 16, 0.75);
+        }
+
+        .dialog-body {
+            min-height: 0;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            flex: 1 1 auto;
+        }
+
+        .dialog-body::-webkit-scrollbar, .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .dialog-body::-webkit-scrollbar-thumb, .custom-scroll::-webkit-scrollbar-thumb { border-radius: 999px; background: #394151; }
+        .dialog-body::-webkit-scrollbar-track, .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+
+        .option-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            border: 1px solid var(--line);
+            background: var(--panel-2);
+            transition: border-color 180ms ease, background-color 180ms ease;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .option-row:hover {
+            border-color: rgba(240, 78, 35, 0.5);
+            background: rgba(240, 78, 35, 0.06);
+        }
+
+        .option-row input { accent-color: var(--brand); cursor: pointer; }
+
+        .cart-empty {
+            min-height: 190px;
+            border: 1px dashed rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+        }
+
+        .cart-item {
+            border: 1px solid var(--line);
+            background: var(--panel-2);
+            border-radius: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--success);
+            box-shadow: 0 0 0 5px rgba(114, 226, 161, 0.1);
+        }
+
+        .status-dot.closed {
+            background: var(--danger);
+            box-shadow: 0 0 0 5px rgba(255, 112, 112, 0.1);
+        }
+
+        .chat-panel {
+            transform-origin: bottom right;
+            animation: chat-in 180ms ease both;
+            border-radius: 12px;
+        }
+
+        .chat-panel[hidden] { display: none; }
+        .chat-message { max-width: 88%; word-break: break-word; }
+
+        #toast {
+            position: fixed;
+            right: 1.25rem;
+            bottom: 1.25rem;
+            z-index: 150;
+            max-width: min(360px, calc(100vw - 2.5rem));
+            padding: 0.9rem 1rem;
+            border: 1px solid rgba(240, 78, 35, 0.35);
+            color: #f8fafc;
+            background: rgba(17, 20, 28, 0.96);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(12px);
+            transition: opacity 180ms ease, transform 180ms ease;
+            border-radius: 8px;
+        }
+
+        #toast.is-visible { opacity: 1; transform: translateY(0); }
+
+        .stripe-card {
+            min-height: 48px;
+            padding: 0.85rem;
+            border: 1px solid var(--line);
+            background: var(--panel-2);
+            transition: border-color 180ms ease, box-shadow 180ms ease;
+            border-radius: 6px;
+        }
+
+        .stripe-card:focus-within {
+            border-color: rgba(240, 78, 35, 0.8);
+            box-shadow: 0 0 0 3px rgba(240, 78, 35, 0.15);
+        }
+
+        .hero-copy { animation: hero-rise 700ms ease both; }
+        
+        .food-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+            transition: transform 500ms ease, filter 500ms ease;
+            filter: brightness(0.85) contrast(1.1);
+        }
+        
+        .gallery-tile {
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+        }
+        .gallery-tile:hover .food-image {
+            transform: scale(1.05);
+            filter: brightness(1) contrast(1.1);
+        }
+
+        @keyframes modal-fade-in { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes dialog-slide-in { from { opacity: 0; transform: translateY(12px) scale(0.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes chat-in { from { opacity: 0; transform: scale(0.96) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes hero-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 767px) {
+            .hero { min-height: 760px; background-position: 58% center; }
+            #hero-canvas { opacity: 0.35; }
+            .dialog { max-height: calc(100dvh - 1rem); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+            }
+            #hero-canvas { display: none; }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <header class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink/80 backdrop-blur-xl">
+        <nav class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10" aria-label="Primary navigation">
+            <a href="#top" class="flex items-center gap-3 font-display text-lg font-bold tracking-tight text-white sm:text-xl">
+                <div class="h-10 w-10 overflow-hidden rounded-full bg-white flex items-center justify-center p-1">
+                    <img src="image_2f4162.png" alt="Mel's Tasty Bites Logo" class="h-full w-full object-contain">
+                </div>
+                <div>
+                    <span class="text-brand">MEL'S TASTY BITES</span>
+                </div>
+            </a>
+
+            <div class="hidden items-center gap-7 md:flex">
+                <a href="#about" class="text-sm font-semibold text-slate-300 transition hover:text-brand">About</a>
+                <a href="#menu" class="text-sm font-semibold text-slate-300 transition hover:text-brand">Menu</a>
+                <a href="#gallery" class="text-sm font-semibold text-slate-300 transition hover:text-brand">Gallery</a>
+                <a href="#location" class="text-sm font-semibold text-slate-300 transition hover:text-brand">Location</a>
+                <a href="#menu" class="brand-button rounded-full px-6 py-2.5 font-display text-sm font-bold uppercase tracking-wide">
+                    Order Online
+                </a>
+            </div>
+
+            <button id="mobile-menu-button" type="button" class="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/5 text-white md:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </nav>
+
+        <div id="mobile-menu" hidden class="border-t border-white/10 bg-ink/95 px-5 py-5 md:hidden">
+            <div class="flex flex-col gap-1">
+                <a href="#about" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">About</a>
+                <a href="#menu" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">Menu</a>
+                <a href="#gallery" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">Gallery</a>
+                <a href="#location" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">Location</a>
+                <a href="#menu" class="brand-button mt-2 rounded-lg px-4 py-3 text-center font-display text-sm font-bold uppercase tracking-wide">
+                    Order Online
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main id="top">
+        <section class="hero flex items-center pt-20">
+            <canvas id="hero-canvas" aria-hidden="true"></canvas>
+            <div class="hero-grid" aria-hidden="true"></div>
+
+            <div class="mx-auto w-full max-w-7xl px-5 py-24 sm:px-8 lg:px-10">
+                <div class="hero-copy max-w-4xl">
+                    <div class="mb-6 flex flex-wrap items-center gap-3">
+                        <span class="section-kicker">Baulkham Hills High School</span>
+                        <span class="h-px w-14 bg-brand/60"></span>
+                        <span class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Healthy Canteen Operators</span>
+                    </div>
+
+                    <h1 class="max-w-4xl font-display text-5xl font-bold leading-[0.94] tracking-[-0.06em] text-white sm:text-7xl lg:text-[7.5rem]">
+                        Fuel your focus.
+                        <span class="block text-brand">Fresh daily.</span>
+                    </h1>
+
+                    <p class="mt-8 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
+                        Pre-order your recess and lunch online to skip the queue. Delicious, nutritious, and made fresh on-site every single day for BHHS students and staff.
+                    </p>
+
+                    <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+                        <a href="#menu" class="brand-button rounded-full inline-flex items-center justify-center gap-3 px-8 py-4 font-display text-sm font-bold uppercase tracking-wide">
+                            View Menu & Order
+                            <i class="fa-solid fa-arrow-down-long text-xs"></i>
+                        </a>
+                        <a href="#about" class="ghost-button rounded-full inline-flex items-center justify-center gap-3 px-8 py-4 font-display text-sm font-bold uppercase tracking-wide">
+                            Dietary Info
+                            <i class="fa-solid fa-leaf text-xs text-leaf"></i>
+                        </a>
+                    </div>
+
+                    <div class="mt-14 grid max-w-xl grid-cols-3 gap-4 border-t border-white/10 pt-6">
+                        <div>
+                            <p class="font-display text-2xl font-bold text-white">8:00<span class="text-sm text-slate-400">AM</span></p>
+                            <p class="mt-1 text-xs uppercase tracking-wider text-slate-500">Opens daily</p>
+                        </div>
+                        <div>
+                            <p class="font-display text-2xl font-bold text-white"><i class="fa-solid fa-bolt text-brand"></i></p>
+                            <p class="mt-1 text-xs uppercase tracking-wider text-slate-500">Fast Pickup</p>
+                        </div>
+                        <div>
+                            <p class="font-display text-2xl font-bold text-white"><i class="fa-solid fa-leaf text-leaf"></i></p>
+                            <p class="mt-1 text-xs uppercase tracking-wider text-slate-500">Halal & V Opts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="border-t border-white/10 py-24 sm:py-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                <div class="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+                    <div>
+                        <p class="section-kicker">Our Commitment</p>
+                        <h2 class="mt-5 max-w-xl font-display text-4xl font-bold leading-tight tracking-[-0.04em] text-white sm:text-6xl">
+                            Healthy food for active minds.
+                        </h2>
+                    </div>
+
+                    <p class="max-w-2xl text-lg leading-8 text-slate-400">
+                        We believe that good nutrition is key to academic success. Our menu is designed to provide balanced, tasty options that keep energy levels up throughout the school day.
+                    </p>
+                </div>
+
+                <div class="mt-16 grid gap-4 md:grid-cols-3">
+                    <article class="glass p-7 rounded-xl">
+                        <div class="service-icon"><i class="fa-solid fa-basket-shopping"></i></div>
+                        <h3 class="mt-8 font-display text-2xl font-bold text-white">Fresh Ingredients</h3>
+                        <p class="mt-4 text-sm leading-7 text-slate-400">We source fresh produce and prepare our meals daily to ensure maximum flavor and nutrition.</p>
+                    </article>
+
+                    <article class="glass p-7 rounded-xl">
+                        <div class="service-icon"><i class="fa-solid fa-person-running"></i></div>
+                        <h3 class="mt-8 font-display text-2xl font-bold text-white">Skip the Queue</h3>
+                        <p class="mt-4 text-sm leading-7 text-slate-400">Order online before the bell rings and pick up your food instantly from the priority window.</p>
+                    </article>
+
+                    <article class="glass p-7 rounded-xl">
+                        <div class="service-icon"><i class="fa-solid fa-wheat-awn"></i></div>
+                        <h3 class="mt-8 font-display text-2xl font-bold text-white">Dietary Friendly</h3>
+                        <p class="mt-4 text-sm leading-7 text-slate-400">A wide range of Halal certified, vegetarian, and gluten-friendly options available daily.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery" class="border-t border-white/10 py-24 sm:py-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+                    <div>
+                        <p class="section-kicker">Fresh from the kitchen</p>
+                        <h2 class="mt-5 font-display text-4xl font-bold tracking-[-0.04em] text-white sm:text-6xl">
+                            Taste the difference.
+                        </h2>
+                    </div>
+                    <p class="max-w-md text-sm leading-7 text-slate-400">
+                        A sneak peek at some of our student favorites. From hot hearty meals to fresh summer salads.
+                    </p>
+                </div>
+
+                <div class="mt-14 grid auto-rows-[200px] grid-cols-2 gap-3 sm:auto-rows-[260px] md:grid-cols-4">
+                    
+                    <div class="gallery-tile col-span-2 row-span-2 relative">
+                        <img class="food-image absolute inset-0" src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80" alt="Gourmet Burger" loading="lazy">
+                        <div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-md text-xs font-bold text-white">Classic Beef Burger</div>
+                    </div>
+                    
+                    <div class="gallery-tile relative">
+                        <img class="food-image absolute inset-0" src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80" alt="Fresh Salad" loading="lazy">
+                        <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white">Garden Salad</div>
+                    </div>
+
+                    <div class="gallery-tile relative">
+                        <img class="food-image absolute inset-0" src="https://images.unsplash.com/photo-1626808642875-0aa545482dfb?auto=format&fit=crop&w=400&q=80" alt="Fruit Cup" loading="lazy">
+                        <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white">Fresh Fruit</div>
+                    </div>
+                    
+                    <div class="gallery-tile relative">
+                        <img class="food-image absolute inset-0" src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=400&q=80" alt="Sandwich" loading="lazy">
+                        <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white">Toasted Sandwiches</div>
+                    </div>
+
+                    <div class="gallery-tile relative">
+                        <img class="food-image absolute inset-0" src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=400&q=80" alt="Sushi Rolls" loading="lazy">
+                        <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white">Sushi Rolls</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="menu" class="border-t border-white/10 py-24 sm:py-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                <div class="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+                    <div>
+                        <p class="section-kicker">Order Online</p>
+                        <h2 class="mt-5 font-display text-4xl font-bold tracking-[-0.04em] text-white sm:text-6xl">
+                            Canteen Menu
+                        </h2>
+                        <p class="mt-5 max-w-2xl text-base leading-8 text-slate-400">
+                            Build your order, choose a pickup time, and pay securely online to skip the line.
+                        </p>
+                    </div>
+
+                    <div id="shop-status" class="inline-flex w-fit items-center gap-3 rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-slate-300">
+                        <span class="status-dot"></span>
+                        <span id="shop-status-text">Checking canteen status...</span>
+                    </div>
+                </div>
+
+                <div class="mt-14 grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+                    <div id="service-groups" class="space-y-16"></div>
+
+                    <aside class="lg:sticky lg:top-24">
+                        <div class="glass p-6 rounded-xl">
+                            <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-5">
+                                <div>
+                                    <p class="section-kicker">Your Order</p>
+                                    <h3 class="mt-2 font-display text-2xl font-bold text-white">Lunch Bag</h3>
+                                </div>
+                                <span class="rounded bg-brand/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand">
+                                    <span id="cart-count">0</span> items
+                                </span>
+                            </div>
+
+                            <div id="cart-items" class="custom-scroll mt-5 max-h-[430px] space-y-3 overflow-y-auto pr-1"></div>
+
+                            <div id="cart-empty" class="cart-empty mt-5 flex flex-col items-center justify-center px-5 text-center">
+                                <i class="fa-solid fa-basket-shopping text-3xl text-slate-700"></i>
+                                <p class="mt-4 text-sm font-semibold text-slate-400">Your bag is empty.</p>
+                                <p class="mt-2 text-xs leading-5 text-slate-600">Add items from the menu to start your order.</p>
+                            </div>
+
+                            <div class="mt-6 space-y-3 border-t border-white/10 pt-5 text-sm">
+                                <div class="flex justify-between gap-4 text-slate-400">
+                                    <span>Subtotal</span>
+                                    <span id="cart-subtotal">$0.00</span>
+                                </div>
+
+                                <div class="flex justify-between gap-4 border-t border-white/10 pt-4 font-display text-xl font-bold text-white">
+                                    <span>Total due</span>
+                                    <span id="cart-total" class="text-brand">$0.00</span>
+                                </div>
+                            </div>
+
+                            <button id="checkout-button" type="button" disabled class="mt-6 flex w-full items-center justify-center gap-3 rounded-lg bg-white/10 px-5 py-4 font-display text-sm font-bold uppercase tracking-wide text-slate-500 transition disabled:cursor-not-allowed">
+                                <i class="fa-solid fa-credit-card text-xs"></i>
+                                Checkout
+                            </button>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <section id="location" class="border-t border-white/10 py-24 sm:py-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                <div class="grid overflow-hidden rounded-2xl border border-white/10 bg-panel md:grid-cols-2">
+                    <div class="p-8 sm:p-12 lg:p-16">
+                        <p class="section-kicker">Find us</p>
+                        <h2 class="mt-5 font-display text-4xl font-bold tracking-[-0.04em] text-white sm:text-5xl">
+                            Canteen Block
+                        </h2>
+
+                        <div class="mt-12 space-y-8">
+                            <div class="flex gap-4">
+                                <div class="service-icon shrink-0 rounded-full">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-display text-lg font-bold text-white">Baulkham Hills High School</h3>
+                                    <p class="mt-2 text-sm leading-7 text-slate-400">
+                                        419A Windsor Rd,<br>
+                                        Baulkham Hills NSW 2153<br>
+                                        Main Canteen Area
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-4">
+                                <div class="service-icon shrink-0 rounded-full">
+                                    <i class="fa-solid fa-clock"></i>
+                                </div>
+                                <div class="w-full">
+                                    <h3 class="font-display text-lg font-bold text-white">Service Times</h3>
+                                    <div class="mt-3 flex justify-between border-b border-white/10 pb-3 text-sm text-slate-400">
+                                        <span class="font-semibold text-slate-300">Before School</span>
+                                        <span>8:00 AM - 8:30 AM</span>
+                                    </div>
+                                    <div class="mt-3 flex justify-between border-b border-white/10 pb-3 text-sm text-slate-400">
+                                        <span class="font-semibold text-slate-300">Recess</span>
+                                        <span>~10:40 AM</span>
+                                    </div>
+                                    <div class="mt-3 flex justify-between border-b border-white/10 pb-3 text-sm text-slate-400">
+                                        <span class="font-semibold text-slate-300">Lunch</span>
+                                        <span>~12:40 PM</span>
+                                    </div>
+                                    <p class="mt-3 text-xs font-semibold uppercase tracking-wider text-brand">
+                                        Open School Days Only
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="min-h-[380px] bg-panel2">
+                        <iframe title="Map showing Baulkham Hills High School" src="https://maps.google.com/maps?q=Baulkham%20Hills%20High%20School,%20NSW&t=&z=15&ie=UTF8&iwloc=&output=embed" class="h-full min-h-[380px] w-full border-0 grayscale contrast-125 opacity-70" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-white/10 py-12">
+        <div class="mx-auto flex max-w-7xl flex-col gap-6 px-5 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
+            <div class="flex items-center gap-2 font-display text-lg font-bold">
+                <img src="image_2f4162.png" alt="Mel's Tasty Bites Logo" class="h-6 w-6 object-contain bg-white rounded-full p-0.5">
+                <span class="text-brand">MEL'S TASTY BITES</span>
+            </div>
+            <p class="text-sm text-slate-500">
+                &copy; <span id="copyright-year"></span> Mel's Tasty Bites. Operated at BHHS.
+            </p>
+        </div>
+    </footer>
+
+    <div id="item-modal" class="modal" hidden>
+        <div class="modal-backdrop" data-close-modal="item-modal"></div>
+
+        <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="item-modal-title">
+            <div class="dialog-header flex items-start justify-between gap-5 border-b px-6 py-5">
+                <div>
+                    <p class="section-kicker">Customize Item</p>
+                    <h2 id="item-modal-title" class="mt-2 font-display text-2xl font-bold text-white">Item Name</h2>
+                    <p class="mt-1 text-sm font-semibold text-brand">Base price: <span id="item-modal-base-price">$0.00</span></p>
+                </div>
+                <button type="button" class="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-white/10 text-slate-400 transition hover:border-brand hover:text-white" data-close-modal="item-modal" aria-label="Close customization">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="item-modal-options" class="dialog-body space-y-7 p-6"></div>
+            <div class="dialog-footer border-t p-6">
+                <div class="mb-4 flex items-center justify-between gap-4">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Item total</span>
+                    <span id="item-modal-total-price" class="font-display text-2xl font-bold text-brand">$0.00</span>
+                </div>
+                <button id="add-to-booking-button" type="button" class="brand-button rounded-lg flex w-full items-center justify-center gap-3 px-5 py-4 font-display text-sm font-bold uppercase tracking-wide">
+                    Add to order <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <div id="checkout-modal" class="modal" hidden>
+        <div class="modal-backdrop" data-close-modal="checkout-modal"></div>
+
+        <section class="dialog max-w-2xl" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
+            <div class="dialog-header flex items-start justify-between gap-5 border-b px-6 py-5">
+                <div>
+                    <p class="section-kicker">Secure checkout</p>
+                    <h2 id="checkout-modal-title" class="mt-2 font-display text-2xl font-bold text-white">Finalize Order</h2>
+                </div>
+                <button type="button" class="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-white/10 text-slate-400 transition hover:border-brand hover:text-white" data-close-modal="checkout-modal" aria-label="Close checkout">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="checkout-form" novalidate class="flex flex-1 flex-col min-h-0">
+                <div class="dialog-body space-y-8 p-6">
+                    <div class="border border-brand/20 bg-brand/5 rounded-lg">
+                        <div class="p-4 text-center">
+                            <p class="text-xs uppercase tracking-wider text-brand/80">Total Order Amount</p>
+                            <p id="checkout-total" class="mt-2 font-display text-3xl font-bold text-brand">$0.00</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="mb-4 flex items-center justify-between gap-4">
+                            <label for="booking-date" class="text-sm font-bold uppercase tracking-wider text-slate-300">1. Pickup Date & Time</label>
+                        </div>
+                        <input id="booking-date" type="date" class="service-input px-4 py-3 [color-scheme:dark]" required>
+                        <div id="time-slots" class="mt-4 grid grid-cols-3 gap-2"></div>
+                        <p id="time-error" class="mt-2 hidden text-xs font-semibold text-red-400"></p>
+                    </div>
+
+                    <div>
+                        <label class="mb-4 block text-sm font-bold uppercase tracking-wider text-slate-300">2. Student Details</label>
+                        <div class="grid gap-3 sm:grid-cols-2">
+                            <div>
+                                <label for="customer-name" class="sr-only">Full name</label>
+                                <input id="customer-name" type="text" autocomplete="name" placeholder="Student Full Name" class="service-input px-4 py-3" required>
+                            </div>
+                            <div>
+                                <label for="customer-phone" class="sr-only">Student ID / Roll Class</label>
+                                <input id="customer-phone" type="text" placeholder="Roll Class (e.g. 10A)" class="service-input px-4 py-3" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold uppercase tracking-wider text-slate-300">3. Secure Payment</label>
+                            <p class="mt-2 text-xs leading-5 text-slate-500">Pay securely online to guarantee your order.</p>
+                        </div>
+                        <div id="card-element" class="stripe-card"></div>
+                        <p id="card-errors" class="mt-2 hidden text-xs font-semibold text-red-400" role="alert"></p>
+                    </div>
+
+                    <div id="checkout-error" class="hidden rounded-lg border border-red-400/30 bg-red-400/10 p-4 text-sm leading-6 text-red-200" role="alert"></div>
+                </div>
+
+                <div class="dialog-footer border-t p-6">
+                    <button id="pay-button" type="submit" class="brand-button rounded-lg flex w-full items-center justify-center gap-3 px-5 py-4 font-display text-sm font-bold uppercase tracking-wide">
+                        <i class="fa-solid fa-lock text-xs"></i>
+                        Pay <span id="pay-button-amount">$0.00</span>
+                    </button>
+                    <p class="mt-4 text-center text-xs leading-5 text-slate-500">Payments are processed securely by Stripe.</p>
+                </div>
+            </form>
+
+            <div id="checkout-success" hidden class="dialog-body p-8 text-center sm:p-12">
+                <div class="mx-auto grid h-20 w-20 place-items-center rounded-full border border-green-400/30 bg-green-400/10 text-3xl text-green-300">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <p class="section-kicker mt-8" style="color: var(--leaf)">Order Confirmed</p>
+                <h2 class="mt-3 font-display text-3xl font-bold text-white">Your lunch is sorted.</h2>
+                <p class="mx-auto mt-4 max-w-md text-sm leading-7 text-slate-400">We've received your order and payment. Skip the main line and head straight to the pre-order window at your chosen time.</p>
+                <div class="mx-auto mt-8 max-w-md rounded-xl border border-white/10 bg-white/[0.03] p-5 text-left">
+                    <div class="flex justify-between gap-4 text-sm">
+                        <span class="text-slate-500">Pickup</span>
+                        <span id="success-appointment" class="font-semibold text-white"></span>
+                    </div>
+                    <div class="mt-3 flex justify-between gap-4 text-sm">
+                        <span class="text-slate-500">Reference</span>
+                        <span id="success-reference" class="font-semibold text-brand"></span>
+                    </div>
+                </div>
+                <button id="success-close-button" type="button" class="ghost-button rounded-lg mt-8 w-full px-5 py-4 font-display text-sm font-bold uppercase tracking-wide">
+                    Close
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <div id="chatbot" class="fixed bottom-5 right-5 z-40">
+        <div id="chat-panel" hidden class="chat-panel mb-4 w-[min(380px,calc(100vw-2.5rem))] overflow-hidden border border-white/10 bg-panel shadow-2xl shadow-black/40">
+            <div class="flex items-center justify-between border-b border-white/10 bg-ink/70 px-5 py-4">
+                <div class="flex items-center gap-3">
+                    <div class="grid h-10 w-10 place-items-center rounded-full bg-brand text-white">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-lg font-bold text-white">Canteen Helper</h2>
+                        <p class="mt-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                            <span class="h-2 w-2 rounded-full bg-green-400"></span>
+                            Online
+                        </p>
+                    </div>
+                </div>
+                <button id="chat-close-button" type="button" class="grid h-9 w-9 place-items-center rounded-md text-slate-500 transition hover:bg-white/10 hover:text-white" aria-label="Close assistant">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="chat-messages" class="custom-scroll flex h-80 flex-col gap-4 overflow-y-auto p-4"></div>
+            <div id="chat-typing" hidden class="border-t border-white/10 px-4 py-3 text-xs text-brand">Typing...</div>
+
+            <div class="flex gap-2 border-t border-white/10 bg-ink/60 p-3">
+                <label for="chat-input" class="sr-only">Ask the assistant</label>
+                <input id="chat-input" type="text" class="service-input min-w-0 px-3 py-2 text-sm" placeholder="Ask about menu, dietary, etc..." autocomplete="off">
+                <button id="chat-send-button" type="button" class="brand-button rounded-lg grid h-11 w-11 shrink-0 place-items-center" aria-label="Send message">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <button id="chat-toggle-button" type="button" class="brand-button grid h-14 w-14 place-items-center rounded-full text-xl" aria-expanded="false" aria-controls="chat-panel" aria-label="Open assistant">
+            <i class="fa-solid fa-message"></i>
+        </button>
+    </div>
+
+    <script>
+        (() => {
+            "use strict";
+
+            // Payment connection configuration linked to local backend
+            const CONFIG = {
+                stripePublishableKey: "pk_test_51UEq970ABvmtkKDIa58mliogDMSQhqlIS8PNGpOFvfOfW8jJzRpfUXFjZJBdOo6mGAe090LQRew7nSdtsL4CumDQ00yIQi5Ue2",
+                paymentIntentEndpoint: "http://localhost:3000/api/charge",
+                currency: "aud"
+            };
+
+            const SHOP_TIME_ZONE = "Australia/Sydney";
+
+            // Canteen Menu Data
+            const SERVICES = [
+                { id: "burger-beef", category: "Hot Food", name: "Classic Beef Burger", price: 6.50, type: "customizable", icon: "fa-burger", badge: "Popular", description: "Beef patty, lettuce, tomato, cheese on a soft bun." },
+                { id: "burger-chicken", category: "Hot Food", name: "Chicken Schnitzel Burger", price: 7.00, type: "customizable", icon: "fa-burger", description: "Crispy chicken breast, mayo, lettuce." },
+                { id: "pie-meat", category: "Hot Food", name: "Meat Pie", price: 4.50, type: "standard", icon: "fa-cookie", description: "Classic Aussie meat pie. Halal certified." },
+                { id: "sausage-roll", category: "Hot Food", name: "Sausage Roll", price: 4.00, type: "standard", icon: "fa-hotdog", description: "Golden flaky pastry with seasoned meat." },
+                { id: "pasta-bolognese", category: "Hot Food", name: "Penne Bolognese", price: 6.00, type: "standard", icon: "fa-bowl-food", description: "Rich beef bolognese sauce over penne." },
+                { id: "wedges", category: "Hot Food", name: "Potato Wedges", price: 4.00, type: "customizable-sauce", icon: "fa-plate-wheat", badge: "V", description: "Crispy seasoned potato wedges." },
+                
+                { id: "wrap-chicken", category: "Cold Bar", name: "Chicken & Salad Wrap", price: 6.50, type: "wrap", icon: "fa-scroll", description: "Roast chicken, lettuce, tomato, cucumber, mayo." },
+                { id: "sand-ham-cheese", category: "Cold Bar", name: "Ham & Cheese Sandwich", price: 4.50, type: "sandwich", icon: "fa-bread-slice", description: "Smoked ham and tasty cheese." },
+                { id: "salad-garden", category: "Cold Bar", name: "Garden Salad", price: 5.50, type: "standard", icon: "fa-leaf", badge: "V, GF", description: "Mixed leaves, tomato, cucumber, carrot, light dressing." },
+                { id: "sushi-tuna", category: "Cold Bar", name: "Tuna Sushi Roll", price: 4.00, type: "standard", icon: "fa-fish", description: "Cooked tuna and cucumber roll (1 pc)." },
+                
+                { id: "snack-chips", category: "Snacks", name: "Red Rock Deli Chips", price: 2.50, type: "chips", icon: "fa-bag-shopping", description: "Sea Salt or Honey Soy Chicken." },
+                { id: "snack-muffin", category: "Snacks", name: "Choc Chip Muffin", price: 3.50, type: "standard", icon: "fa-cookie-bite", description: "Freshly baked daily." },
+                { id: "snack-fruit", category: "Snacks", name: "Fresh Fruit Cup", price: 3.00, type: "standard", icon: "fa-apple-whole", badge: "V, GF", description: "Seasonal mixed fresh fruit." },
+                { id: "snack-banana-bread", category: "Snacks", name: "Banana Bread", price: 3.50, type: "toastable", icon: "fa-bread-slice", description: "Thick slice of moist banana bread." },
+
+                { id: "drink-water", category: "Drinks", name: "Spring Water (600ml)", price: 2.50, type: "standard", icon: "fa-bottle-water", description: "Chilled bottled water." },
+                { id: "drink-juice", category: "Drinks", name: "Juice Box", price: 2.50, type: "juice", icon: "fa-glass-water", description: "Apple or Orange juice." },
+                { id: "drink-oak", category: "Drinks", name: "Oak Flavored Milk", price: 3.50, type: "milk", icon: "fa-cow", badge: "Popular", description: "Chocolate or Strawberry (300ml)." }
+            ];
+
+            const CATEGORY_DESCRIPTIONS = {
+                "Hot Food": "Hearty, warm meals prepared fresh.",
+                "Cold Bar": "Sandwiches, wraps, and fresh salads.",
+                "Snacks": "Perfect for recess or a quick energy boost.",
+                "Drinks": "Stay hydrated and refreshed."
+            };
+
+            const TIME_SLOTS = [
+                { value: "08:15", label: "Before School (8:15 AM)" },
+                { value: "10:40", label: "Recess (~10:40 AM)" },
+                { value: "12:40", label: "Lunch (~12:40 PM)" }
+            ];
+
+            const state = {
+                cart: [],
+                currentItem: null,
+                stripe: null,
+                stripeCard: null,
+                stripeCardComplete: false,
+                isProcessingPayment: false,
+                completedBooking: null
+            };
+
+            const $ = (selector, root = document) => root.querySelector(selector);
+            const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+            const elements = {
+                serviceGroups: $("#service-groups"),
+                cartItems: $("#cart-items"),
+                cartEmpty: $("#cart-empty"),
+                cartCount: $("#cart-count"),
+                cartSubtotal: $("#cart-subtotal"),
+                cartTotal: $("#cart-total"),
+                checkoutButton: $("#checkout-button"),
+                itemModal: $("#item-modal"),
+                itemModalTitle: $("#item-modal-title"),
+                itemModalBasePrice: $("#item-modal-base-price"),
+                itemModalOptions: $("#item-modal-options"),
+                itemModalTotalPrice: $("#item-modal-total-price"),
+                addToBookingButton: $("#add-to-booking-button"),
+                checkoutModal: $("#checkout-modal"),
+                checkoutForm: $("#checkout-form"),
+                bookingDate: $("#booking-date"),
+                timeSlots: $("#time-slots"),
+                timeError: $("#time-error"),
+                customerName: $("#customer-name"),
+                customerPhone: $("#customer-phone"),
+                cardElement: $("#card-element"),
+                cardErrors: $("#card-errors"),
+                checkoutError: $("#checkout-error"),
+                payButton: $("#pay-button"),
+                payButtonAmount: $("#pay-button-amount"),
+                checkoutTotal: $("#checkout-total"),
+                checkoutSuccess: $("#checkout-success"),
+                successAppointment: $("#success-appointment"),
+                successReference: $("#success-reference"),
+                successCloseButton: $("#success-close-button"),
+                mobileMenuButton: $("#mobile-menu-button"),
+                mobileMenu: $("#mobile-menu"),
+                shopStatus: $("#shop-status"),
+                shopStatusText: $("#shop-status-text"),
+                copyrightYear: $("#copyright-year"),
+                chatPanel: $("#chat-panel"),
+                chatToggleButton: $("#chat-toggle-button"),
+                chatCloseButton: $("#chat-close-button"),
+                chatMessages: $("#chat-messages"),
+                chatTyping: $("#chat-typing"),
+                chatInput: $("#chat-input"),
+                chatSendButton: $("#chat-send-button"),
+                toast: $("#toast")
+            };
+
+            function formatMoney(value) { return `$${Number(value).toFixed(2)}`; }
+
+            function escapeHTML(value) {
+                return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+            }
+
+            function createId() {
+                if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
+                return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+            }
+
+            function getSydneyDateParts(date = new Date()) {
+                const parts = new Intl.DateTimeFormat("en-AU", { timeZone: SHOP_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(date);
+                return Object.fromEntries(parts.filter((part) => part.type !== "literal").map((part) => [part.type, part.value]));
+            }
+
+            function getSydneyDateISO() {
+                const parts = getSydneyDateParts();
+                return `${parts.year}-${parts.month}-${parts.day}`;
+            }
+
+            function showToast(message) {
+                elements.toast.textContent = message;
+                elements.toast.classList.add("is-visible");
+                window.clearTimeout(showToast.timeoutId);
+                showToast.timeoutId = window.setTimeout(() => elements.toast.classList.remove("is-visible"), 3200);
+            }
+
+            function setModalOpen(modal, open) {
+                modal.hidden = !open;
+                document.body.classList.toggle("modal-open", !elements.itemModal.hidden || !elements.checkoutModal.hidden);
+            }
+
+            function closeModalById(id) {
+                if (id === "item-modal") { setModalOpen(elements.itemModal, false); state.currentItem = null; }
+                if (id === "checkout-modal") {
+                    setModalOpen(elements.checkoutModal, false);
+                    const processBtn = $("#pay-button"); 
+                    if(processBtn){ processBtn.innerHTML = `<i class="fa-solid fa-lock text-xs"></i> Pay <span id="pay-button-amount">${formatMoney(getCartTotal())}</span>`; processBtn.disabled = false; }
+                }
+            }
+
+            function renderServiceMenu() {
+                const groupedServices = SERVICES.reduce((groups, service) => {
+                    if (!groups[service.category]) groups[service.category] = [];
+                    groups[service.category].push(service);
+                    return groups;
+                }, {});
+
+                elements.serviceGroups.replaceChildren();
+
+                Object.entries(groupedServices).forEach(([category, services]) => {
+                    const section = document.createElement("section");
+                    section.innerHTML = `
+                        <div class="flex flex-col justify-between gap-3 border-b border-white/10 pb-5 sm:flex-row sm:items-end">
+                            <div>
+                                <p class="section-kicker">Category</p>
+                                <h3 class="mt-2 font-display text-3xl font-bold tracking-[-0.03em] text-white">${escapeHTML(category)}</h3>
+                            </div>
+                            <p class="max-w-sm text-sm leading-6 text-slate-500">${escapeHTML(CATEGORY_DESCRIPTIONS[category] || "")}</p>
+                        </div>
+                    `;
+
+                    const grid = document.createElement("div");
+                    grid.className = "mt-6 grid gap-4 sm:grid-cols-2";
+
+                    services.forEach((service) => {
+                        const card = document.createElement("article");
+                        card.className = "service-card p-5";
+                        const displayedPrice = formatMoney(service.price);
+
+                        card.innerHTML = `
+                            <div>
+                                <div class="flex items-start justify-between gap-4">
+                                    <div class="service-icon"><i class="fa-solid ${escapeHTML(service.icon)}"></i></div>
+                                    ${service.badge ? `<span class="rounded bg-brand/10 border border-brand/20 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-brand">${escapeHTML(service.badge)}</span>` : ""}
+                                </div>
+                                <div class="mt-5 flex items-start justify-between gap-4">
+                                    <h4 class="font-display text-lg font-bold text-white">${escapeHTML(service.name)}</h4>
+                                    <span class="shrink-0 font-display text-lg font-bold text-brand">${escapeHTML(displayedPrice)}</span>
+                                </div>
+                                <p class="mt-2 text-sm leading-6 text-slate-500">${escapeHTML(service.description)}</p>
+                            </div>
+                            <button type="button" class="ghost-button rounded-lg mt-5 flex w-full items-center justify-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-wider" data-service-id="${escapeHTML(service.id)}">
+                                ${service.type === "standard" ? "Add to order" : "Select options"} <i class="fa-solid fa-arrow-right text-[10px] text-brand"></i>
+                            </button>
+                        `;
+                        grid.appendChild(card);
+                    });
+
+                    section.appendChild(grid);
+                    elements.serviceGroups.appendChild(section);
+                });
+            }
+
+            function getCustomizationMarkup(service) {
+                let markup = "";
+                
+                if (service.type === "customizable" || service.type === "sandwich" || service.type === "wrap") {
+                    markup += `
+                        <div>
+                            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Extras & Changes</h3>
+                            <div class="space-y-2">
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input type="checkbox" data-price="0.50" data-label="Add Cheese">
+                                        <span class="text-sm text-slate-300">Add Cheese</span>
+                                    </span>
+                                    <span class="text-xs font-bold text-brand">+$0.50</span>
+                                </label>
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input type="checkbox" data-price="0.50" data-label="Add Tomato Sauce">
+                                        <span class="text-sm text-slate-300">Add Tomato Sauce</span>
+                                    </span>
+                                    <span class="text-xs font-bold text-brand">+$0.50</span>
+                                </label>
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input type="checkbox" data-price="0.00" data-label="No Mayo">
+                                        <span class="text-sm text-slate-300">No Mayo</span>
+                                    </span>
+                                    <span class="text-xs font-bold text-slate-500">Free</span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (service.type === "toastable" || service.type === "sandwich" || service.type === "wrap") {
+                    markup += `
+                        <div>
+                            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Preparation</h3>
+                            <div class="space-y-2">
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input type="radio" name="prep" data-price="0" data-label="Fresh / As is" checked>
+                                        <span class="text-sm text-slate-300">Fresh / As is</span>
+                                    </span>
+                                </label>
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input type="radio" name="prep" data-price="0" data-label="Toasted">
+                                        <span class="text-sm text-slate-300">Toasted</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (service.type === "customizable-sauce") {
+                     markup += `
+                        <div>
+                            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Sauces</h3>
+                            <div class="space-y-2">
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input type="checkbox" data-price="0.50" data-label="Sweet Chilli & Sour Cream">
+                                        <span class="text-sm text-slate-300">Sweet Chilli & Sour Cream</span>
+                                    </span>
+                                    <span class="text-xs font-bold text-brand">+$0.50</span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if (service.type === "chips") {
+                    markup += `
+                        <div>
+                            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Flavor</h3>
+                            <div class="space-y-2">
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input type="radio" name="flavor" data-price="0" data-label="Sea Salt" checked>
+                                        <span class="text-sm text-slate-300">Sea Salt</span>
+                                    </span>
+                                </label>
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input type="radio" name="flavor" data-price="0" data-label="Honey Soy Chicken">
+                                        <span class="text-sm text-slate-300">Honey Soy Chicken</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if (service.type === "juice") {
+                     markup += `
+                        <div>
+                            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Flavor</h3>
+                            <div class="space-y-2">
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input type="radio" name="flavor" data-price="0" data-label="Apple" checked>
+                                        <span class="text-sm text-slate-300">Apple</span>
+                                    </span>
+                                </label>
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input type="radio" name="flavor" data-price="0" data-label="Orange">
+                                        <span class="text-sm text-slate-300">Orange</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if (service.type === "milk") {
+                     markup += `
+                        <div>
+                            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Flavor</h3>
+                            <div class="space-y-2">
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input type="radio" name="flavor" data-price="0" data-label="Chocolate" checked>
+                                        <span class="text-sm text-slate-300">Chocolate</span>
+                                    </span>
+                                </label>
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input type="radio" name="flavor" data-price="0" data-label="Strawberry">
+                                        <span class="text-sm text-slate-300">Strawberry</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (service.type === "standard") {
+                    markup += `<div class="border border-white/10 bg-white/[0.03] p-4 rounded-lg text-sm leading-6 text-slate-400">This item is prepared standard. Add a note below for dietary requirements.</div>`;
+                }
+
+                markup += `
+                    <div class="${service.type === "standard" ? "mt-4" : ""}">
+                        <label for="item-notes" class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">Dietary or Special Requests</label>
+                        <textarea id="item-notes" class="service-textarea min-h-24 resize-y p-3 text-sm" placeholder="Example: Allergy to..."></textarea>
+                    </div>
+                `;
+                return markup;
+            }
+
+            function getCustomizationSelection() {
+                const selectedInputs = $$("input[data-price]:checked", elements.itemModalOptions);
+                const options = selectedInputs.map((input) => input.dataset.label).filter(l => l !== "Fresh / As is");
+                const extraPrice = selectedInputs.reduce((total, input) => total + Number(input.dataset.price || 0), 0);
+                return { options, extraPrice };
+            }
+
+            function updateItemModalPrice() {
+                if (!state.currentItem) return;
+                const selection = getCustomizationSelection();
+                const total = state.currentItem.service.price + selection.extraPrice;
+                elements.itemModalTotalPrice.textContent = formatMoney(total);
+            }
+
+            function openItemModal(serviceId) {
+                const service = SERVICES.find((item) => item.id === serviceId);
+                if (!service) return;
+
+                state.currentItem = { service, selection: null };
+
+                elements.itemModalTitle.textContent = service.name;
+                elements.itemModalBasePrice.textContent = formatMoney(service.price);
+                elements.itemModalTotalPrice.textContent = formatMoney(service.price);
+                elements.itemModalOptions.innerHTML = getCustomizationMarkup(service);
+
+                setModalOpen(elements.itemModal, true);
+                window.requestAnimationFrame(() => {
+                    const firstInput = $("input, textarea, button", elements.itemModalOptions);
+                    firstInput?.focus();
+                });
+            }
+
+            function closeItemModal() { closeModalById("item-modal"); }
+
+            function addCurrentItemToCart() {
+                if (!state.currentItem) return;
+
+                const { service } = state.currentItem;
+                const selection = getCustomizationSelection();
+                const notes = $("#item-notes", elements.itemModalOptions)?.value.trim();
+                const options = [...selection.options];
+
+                if (notes) options.push(`Note: ${notes}`);
+
+                state.cart.push({
+                    cartId: createId(),
+                    serviceId: service.id,
+                    name: service.name,
+                    price: service.price + selection.extraPrice,
+                    options
+                });
+
+                renderCart();
+                closeItemModal();
+                showToast(`${service.name} added to your order.`);
+            }
+
+            function getCartSubtotal() { return state.cart.reduce((total, item) => total + item.price, 0); }
+            function getCartTotal() { return getCartSubtotal(); } // No extra fee for canteen
+
+            function renderCartItem(item) {
+                const wrapper = document.createElement("article");
+                wrapper.className = "cart-item flex items-start justify-between gap-3 p-3";
+
+                const content = document.createElement("div");
+                content.className = "min-w-0 flex-1";
+
+                const header = document.createElement("div");
+                header.className = "flex items-start justify-between gap-3";
+
+                const name = document.createElement("p");
+                name.className = "font-semibold leading-5 text-white";
+                name.textContent = item.name;
+
+                const price = document.createElement("span");
+                price.className = "shrink-0 text-sm font-bold text-brand";
+                price.textContent = formatMoney(item.price);
+
+                header.append(name, price);
+                content.appendChild(header);
+
+                if (item.options.length > 0) {
+                    const options = document.createElement("ul");
+                    options.className = "mt-2 space-y-1 text-xs leading-5 text-slate-400";
+                    item.options.forEach((option) => {
+                        const optionItem = document.createElement("li");
+                        optionItem.className = "flex gap-2";
+                        optionItem.innerHTML = `<span class="text-brand">+</span>`;
+                        const optionText = document.createElement("span");
+                        optionText.textContent = option;
+                        optionItem.appendChild(optionText);
+                        options.appendChild(optionItem);
+                    });
+                    content.appendChild(options);
+                }
+
+                const removeButton = document.createElement("button");
+                removeButton.type = "button";
+                removeButton.className = "grid h-8 w-8 shrink-0 place-items-center rounded bg-red-400/10 text-red-400 transition hover:bg-red-400/20 hover:text-red-300";
+                removeButton.dataset.removeCartId = item.cartId;
+                removeButton.setAttribute("aria-label", `Remove ${item.name}`);
+                removeButton.innerHTML = `<i class="fa-solid fa-trash-can text-xs"></i>`;
+
+                wrapper.append(content, removeButton);
+                return wrapper;
+            }
+
+            function renderCart() {
+                const subtotal = getCartSubtotal();
+                const total = getCartTotal();
+
+                elements.cartItems.replaceChildren();
+                state.cart.forEach((item) => elements.cartItems.appendChild(renderCartItem(item)));
+
+                elements.cartEmpty.hidden = state.cart.length > 0;
+                elements.cartCount.textContent = String(state.cart.length);
+                elements.cartSubtotal.textContent = formatMoney(subtotal);
+                elements.cartTotal.textContent = formatMoney(total);
+
+                elements.checkoutButton.disabled = state.cart.length === 0;
+                if (state.cart.length > 0) {
+                    elements.checkoutButton.className = "brand-button mt-6 flex w-full rounded-lg items-center justify-center gap-3 px-5 py-4 font-display text-sm font-bold uppercase tracking-wide";
+                } else {
+                    elements.checkoutButton.className = "mt-6 flex w-full items-center rounded-lg justify-center gap-3 bg-white/10 px-5 py-4 font-display text-sm font-bold uppercase tracking-wide text-slate-500 transition disabled:cursor-not-allowed";
+                }
+                updateCheckoutSummary();
+            }
+
+            function removeCartItem(cartId) {
+                const index = state.cart.findIndex((item) => item.cartId === cartId);
+                if (index === -1) return;
+                const removedItem = state.cart[index];
+                state.cart.splice(index, 1);
+                renderCart();
+                showToast(`${removedItem.name} removed.`);
+            }
+
+            function renderTimeSlots() {
+                elements.timeSlots.replaceChildren();
+                TIME_SLOTS.forEach((slot) => {
+                    const label = document.createElement("label");
+                    label.className = "cursor-pointer";
+
+                    const input = document.createElement("input");
+                    input.type = "radio";
+                    input.name = "booking-time";
+                    input.value = slot.value;
+                    input.dataset.label = slot.label;
+                    input.className = "peer sr-only";
+
+                    const visual = document.createElement("span");
+                    visual.className = "flex h-full items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] px-2 py-3 text-center text-xs font-bold text-slate-300 transition hover:border-brand/50 peer-checked:border-brand peer-checked:bg-brand peer-checked:text-ink";
+                    visual.textContent = slot.label;
+
+                    label.append(input, visual);
+                    elements.timeSlots.appendChild(label);
+                });
+            }
+
+            function updateCheckoutSummary() {
+                const total = getCartTotal();
+                elements.checkoutTotal.textContent = formatMoney(total);
+                if(elements.payButtonAmount) elements.payButtonAmount.textContent = formatMoney(total);
+            }
+
+            function clearCheckoutErrors() {
+                elements.checkoutError.hidden = true;
+                elements.checkoutError.textContent = "";
+                elements.cardErrors.hidden = true;
+                elements.cardErrors.textContent = "";
+                elements.timeError.hidden = true;
+                elements.timeError.textContent = "";
+
+                [elements.bookingDate, elements.customerName, elements.customerPhone].forEach((element) => {
+                    element.removeAttribute("aria-invalid");
+                });
+            }
+
+            function showCheckoutError(message) {
+                elements.checkoutError.textContent = message;
+                elements.checkoutError.hidden = false;
+                elements.checkoutError.scrollIntoView({ block: "nearest", behavior: "smooth" });
+            }
+
+            function validateCheckout() {
+                clearCheckoutErrors();
+                const date = elements.bookingDate.value;
+                const selectedTime = $('input[name="booking-time"]:checked', elements.timeSlots);
+                const name = elements.customerName.value.trim();
+                const phone = elements.customerPhone.value.trim();
+
+                let valid = true;
+                if (!date || date < elements.bookingDate.min) { elements.bookingDate.setAttribute("aria-invalid", "true"); valid = false; }
+                if (!selectedTime) { elements.timeError.textContent = "Select a pickup time."; elements.timeError.hidden = false; valid = false; }
+                if (name.length < 2) { elements.customerName.setAttribute("aria-invalid", "true"); valid = false; }
+                if (phone.length < 2) { elements.customerPhone.setAttribute("aria-invalid", "true"); valid = false; } // Simplified for roll class
+                
+                if (!valid) showCheckoutError("Please complete all highlighted details above.");
+                return valid;
+            }
+
+            function getBookingDetails() {
+                const selectedTime = $('input[name="booking-time"]:checked', elements.timeSlots);
+                return {
+                    date: elements.bookingDate.value,
+                    time: selectedTime?.value || "",
+                    timeLabel: selectedTime?.dataset.label || "",
+                    name: elements.customerName.value.trim(),
+                    phone: elements.customerPhone.value.trim()
+                };
+            }
+
+            function mountStripeCard() {
+                if (state.stripeCard) return true;
+
+                if (!window.Stripe) {
+                    showCheckoutError("Payment system could not be loaded. Check your network connection.");
+                    return false;
+                }
+
+                if (!CONFIG.stripePublishableKey || CONFIG.stripePublishableKey.includes("REPLACE_WITH")) {
+                    showCheckoutError("Configuration Error: Missing Stripe Key.");
+                    return false;
+                }
+
+                try {
+                    state.stripe = window.Stripe(CONFIG.stripePublishableKey);
+                    const stripeElements = state.stripe.elements();
+
+                    state.stripeCard = stripeElements.create("card", {
+                        hidePostalCode: true,
+                        style: {
+                            base: { color: "#f8fafc", fontFamily: '"DM Sans", sans-serif', fontSize: "14px", fontSmoothing: "antialiased", "::placeholder": { color: "#687083" } },
+                            invalid: { color: "#ff7070", iconColor: "#ff7070" }
+                        }
+                    });
+
+                    state.stripeCard.mount("#card-element");
+                    state.stripeCard.on("change", (event) => {
+                        state.stripeCardComplete = event.complete;
+                        if (event.error) {
+                            elements.cardErrors.textContent = event.error.message;
+                            elements.cardErrors.hidden = false;
+                        } else {
+                            elements.cardErrors.textContent = "";
+                            elements.cardErrors.hidden = true;
+                        }
+                    });
+                    return true;
+                } catch (error) {
+                    console.error(error);
+                    showCheckoutError("Secure payment gateway could not be initialized.");
+                    return false;
+                }
+            }
+
+            function openCheckout() {
+                if (state.cart.length === 0) return;
+
+                elements.bookingDate.min = getSydneyDateISO();
+                updateCheckoutSummary();
+                clearCheckoutErrors();
+                setModalOpen(elements.checkoutModal, true);
+                
+                setTimeout(() => mountStripeCard(), 50);
+                window.requestAnimationFrame(() => elements.bookingDate.focus());
+            }
+
+            function resetCheckoutView() {
+                elements.checkoutForm.hidden = false;
+                elements.checkoutSuccess.hidden = true;
+                elements.checkoutForm.reset();
+                elements.bookingDate.min = getSydneyDateISO();
+                clearCheckoutErrors();
+
+                if (state.stripeCard) state.stripeCard.clear();
+                state.completedBooking = null;
+            }
+
+            function closeCheckout() {
+                closeModalById("checkout-modal");
+                if (state.completedBooking) resetCheckoutView();
+            }
+
+            function showBookingSuccess(paymentIntentId, booking) {
+                state.completedBooking = { paymentIntentId, booking };
+                elements.successAppointment.textContent = `${booking.date} at ${booking.timeLabel}`;
+                elements.successReference.textContent = paymentIntentId ? `#${paymentIntentId.slice(-8).toUpperCase()}` : "Confirmed";
+
+                elements.checkoutForm.hidden = true;
+                elements.checkoutSuccess.hidden = false;
+
+                state.cart = [];
+                renderCart();
+            }
+
+            async function processPayment() {
+                if (state.isProcessingPayment) return;
+                if (state.cart.length === 0 || !validateCheckout()) return;
+
+                if (!state.stripeCardComplete) {
+                    elements.cardErrors.textContent = "Enter complete card details.";
+                    elements.cardErrors.hidden = false;
+                    return;
+                }
+
+                state.isProcessingPayment = true;
+                elements.payButton.disabled = true;
+                elements.payButton.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-xs"></i> Processing...`;
+
+                try {
+                    const booking = getBookingDetails();
+                    const result = await state.stripe.createToken(state.stripeCard);
+                    if (result.error) throw new Error(result.error.message);
+
+                    const servicesList = state.cart.map(item => item.options.length > 0 ? `${item.name} (${item.options.join(', ')})` : item.name).join(' | ');
+                    const paymentDescription = `Canteen Order: ${booking.date} @ ${booking.timeLabel} | Student: ${booking.name} (${booking.phone})`;
+
+                    // Process exact cart amount in cents for the backend
+                    const amountInCents = Math.round(getCartTotal() * 100);
+
+                    const response = await fetch(CONFIG.paymentIntentEndpoint, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ 
+                            token: result.token.id,
+                            amount: amountInCents,
+                            currency: CONFIG.currency,
+                            description: paymentDescription,
+                            metadata: {
+                                customer_name: booking.name,
+                                roll_class: booking.phone,
+                                pickup_date: booking.date,
+                                pickup_time: booking.timeLabel,
+                                order_items: servicesList
+                            }
+                        })
+                    });
+
+                    const responseData = await response.json().catch(() => ({}));
+
+                    if (!response.ok || !responseData.success) {
+                        throw new Error(responseData.error || `Payment failed on the server.`);
+                    }
+
+                    showBookingSuccess(result.token.id, booking);
+
+                } catch (error) {
+                    console.error(error);
+                    showCheckoutError(error.message || "Payment failed. Check your details and try again.");
+                } finally {
+                    state.isProcessingPayment = false;
+                    elements.payButton.disabled = false;
+                    elements.payButton.innerHTML = `<i class="fa-solid fa-lock text-xs"></i> Pay <span id="pay-button-amount">${formatMoney(getCartTotal())}</span>`;
+                }
+            }
+
+            function updateShopStatus() {
+                const formatter = new Intl.DateTimeFormat("en-AU", { timeZone: SHOP_TIME_ZONE, hour: "2-digit", minute: "2-digit", hour12: false });
+                const parts = formatter.formatToParts(new Date());
+                const hour = Number(parts.find((part) => part.type === "hour")?.value || 0);
+                const minute = Number(parts.find((part) => part.type === "minute")?.value || 0);
+                const decimalTime = hour + minute / 60;
+                // Canteen generally open 8am to 2pm
+                const isOpen = decimalTime >= 8.0 && decimalTime < 14.5; 
+
+                const dot = $(".status-dot", elements.shopStatus);
+                dot.classList.toggle("closed", !isOpen);
+                elements.shopStatusText.textContent = isOpen ? "Canteen is open" : "Canteen is closed";
+            }
+
+            function appendChatMessage(text, isUser = false) {
+                const wrapper = document.createElement("div");
+                wrapper.className = isUser ? "chat-message self-end" : "chat-message self-start";
+                const bubble = document.createElement("div");
+                bubble.className = isUser ? "bg-brand rounded-xl rounded-br-sm px-4 py-3 text-sm font-semibold leading-6 text-white" : "border border-white/10 rounded-xl rounded-bl-sm bg-panel2 px-4 py-3 text-sm leading-6 text-slate-300";
+                bubble.textContent = text;
+                wrapper.appendChild(bubble);
+                elements.chatMessages.appendChild(wrapper);
+                elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+            }
+
+            function getBotResponse(input) {
+                const str = input.toLowerCase();
+                
+                // Dietary matching
+                if (/(vegan|vegetarian|veg|plant)/i.test(str)) {
+                    return "We have plenty of vegetarian options! Check out the Garden Salad, Veggie Burger (ask staff today), and our fresh fruit snacks. All marked with a 'V' badge.";
+                }
+                if (/(halal)/i.test(str)) {
+                    return "Most of our chicken and meat products, like our Meat Pies, are Halal certified. Please add a note in your order or ask staff to double check specific items.";
+                }
+                if (/(gluten|gf|celiac|coeliac)/i.test(str)) {
+                    return "We offer gluten-friendly options like the Garden Salad and Fresh Fruit (marked GF). Note that our kitchen handles gluten, so we cannot guarantee zero cross-contamination.";
+                }
+                if (/(allergy|nut|dairy|egg)/i.test(str)) {
+                    return "If you have a severe allergy, please add a note in the 'Dietary Requests' box when customizing your item, or speak to Mel directly at the window.";
+                }
+
+                // Logistics & Ordering
+                if (/(time|open|close|hour|when)/i.test(str)) {
+                    return "The canteen is open school days from 8:00 AM. You can order online and select pickup for Before School (8:15 AM), Recess (~10:40 AM), or Lunch (~12:40 PM).";
+                }
+                if (/(where|location|find)/i.test(str)) {
+                    return "We are located at the Canteen Block, Baulkham Hills High School (419A Windsor Rd). Look for the priority window if you've pre-ordered!";
+                }
+                if (/(order|pay|card|cash|how to)/i.test(str)) {
+                    return "You can skip the line by adding items to your bag here, choosing a pickup time, and paying securely with card via Stripe. We also accept cash/card at the physical window.";
+                }
+                if (/(late|forgot|change)/i.test(str)) {
+                    return "Online orders close just before break times. If you missed the cutoff, you'll need to line up at the window.";
+                }
+
+                // Menu specific
+                if (/(burger|hot food|pie)/i.test(str)) {
+                    return "Our hot food section includes Beef Burgers, Chicken Schnitzel Burgers, Meat Pies, and Pasta. Add them to your bag to see extra options like cheese or sauce!";
+                }
+                if (/(drink|water|juice)/i.test(str)) {
+                    return "We stock Spring Water, Juice Boxes, and Oak Flavored Milk. Scroll down to the Drinks section on the menu.";
+                }
+                if (/(price|cost|much)/i.test(str)) {
+                    return "Prices are listed on the menu. Hot food ranges from $4.00 to $7.00, wraps are around $6.50, and snacks start at $2.50.";
+                }
+
+                // Greetings
+                if (/(hello|hi|hey|morning)/i.test(str)) {
+                    return "Hi there! Welcome to Mel's Tasty Bites. Need help finding dietary info, opening times, or how to order?";
+                }
+
+                // Fallback
+                return "I can help with questions about our menu, dietary options (Halal, GF, Veg), opening times, and the online ordering process. What do you need to know?";
+            }
+
+            function sendChatMessage() {
+                const text = elements.chatInput.value.trim();
+                if (!text) return;
+                appendChatMessage(text, true);
+                elements.chatInput.value = "";
+                elements.chatTyping.hidden = false;
+                window.setTimeout(() => {
+                    elements.chatTyping.hidden = true;
+                    appendChatMessage(getBotResponse(text));
+                }, 650 + Math.random() * 400); // Slight random delay for realism
+            }
+
+            function toggleChat(forceOpen) {
+                const shouldOpen = typeof forceOpen === "boolean" ? forceOpen : elements.chatPanel.hidden;
+                elements.chatPanel.hidden = !shouldOpen;
+                elements.chatToggleButton.setAttribute("aria-expanded", String(shouldOpen));
+                if (shouldOpen) elements.chatInput.focus();
+            }
+
+            function initNavigation() {
+                elements.mobileMenuButton.addEventListener("click", () => {
+                    const isOpen = !elements.mobileMenu.hidden;
+                    elements.mobileMenu.hidden = isOpen;
+                    elements.mobileMenuButton.setAttribute("aria-expanded", String(!isOpen));
+                    elements.mobileMenuButton.innerHTML = isOpen ? `<i class="fa-solid fa-bars"></i>` : `<i class="fa-solid fa-xmark"></i>`;
+                });
+                $$(".mobile-nav-link, #mobile-menu a[href='#menu']").forEach((link) => {
+                    link.addEventListener("click", () => {
+                        elements.mobileMenu.hidden = true;
+                        elements.mobileMenuButton.setAttribute("aria-expanded", "false");
+                        elements.mobileMenuButton.innerHTML = `<i class="fa-solid fa-bars"></i>`;
+                    });
+                });
+            }
+
+            function initThreeBackground() {
+                const canvas = $("#hero-canvas");
+                const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                if (!canvas || !window.THREE || reducedMotion) return;
+
+                try {
+                    const scene = new THREE.Scene();
+                    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+                    camera.position.z = 7;
+
+                    const renderer = new THREE.WebGLRenderer({
+                        canvas,
+                        alpha: true,
+                        antialias: false,
+                        powerPreference: "low-power"
+                    });
+                    renderer.setPixelRatio(1.0);
+                    renderer.setClearColor(0x000000, 0);
+
+                    const group = new THREE.Group();
+                    scene.add(group);
+
+                    // Changed core to Orange/Red to match food theme
+                    const coreGeometry = new THREE.IcosahedronGeometry(2.25, 2);
+                    const coreMaterial = new THREE.MeshBasicMaterial({ color: 0xf04e23, wireframe: true, transparent: true, opacity: 0.12 });
+                    const core = new THREE.Mesh(coreGeometry, coreMaterial);
+                    group.add(core);
+
+                    // Ring to green
+                    const ringGeometry = new THREE.TorusGeometry(2.9, 0.008, 8, 160);
+                    const ringMaterial = new THREE.MeshBasicMaterial({ color: 0x3b963b, transparent: true, opacity: 0.25 });
+                    const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+                    ring.rotation.x = Math.PI / 2.6;
+                    group.add(ring);
+
+                    const particleCount = window.innerWidth < 768 ? 40 : 80;
+                    const positions = new Float32Array(particleCount * 3);
+                    const colors = new Float32Array(particleCount * 3);
+                    const color = new THREE.Color();
+
+                    for (let index = 0; index < particleCount; index += 1) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const radius = 2.8 + Math.random() * 2.9;
+                        const vertical = (Math.random() - 0.5) * 4.3;
+
+                        positions[index * 3] = Math.cos(angle) * radius;
+                        positions[index * 3 + 1] = vertical;
+                        positions[index * 3 + 2] = Math.sin(angle) * radius;
+
+                        // Warmer food-like particle colors (Orange, Yellow, slightly Green)
+                        const hue = Math.random() > 0.7 ? 0.3 : (Math.random() > 0.3 ? 0.05 : 0.1); 
+                        color.setHSL(hue, 0.8, 0.5);
+                        colors[index * 3] = color.r;
+                        colors[index * 3 + 1] = color.g;
+                        colors[index * 3 + 2] = color.b;
+                    }
+
+                    const particleGeometry = new THREE.BufferGeometry();
+                    particleGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+                    particleGeometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+                    const particleMaterial = new THREE.PointsMaterial({ size: window.innerWidth < 768 ? 0.045 : 0.055, transparent: true, opacity: 0.74, vertexColors: true, depthWrite: false });
+                    const particles = new THREE.Points(particleGeometry, particleMaterial);
+                    scene.add(particles);
+
+                    const pointer = { x: 0, y: 0 };
+                    window.addEventListener("pointermove", (event) => {
+                        pointer.x = (event.clientX / window.innerWidth - 0.5) * 2;
+                        pointer.y = (event.clientY / window.innerHeight - 0.5) * 2;
+                    }, { passive: true });
+
+                    function resize() {
+                        const rect = canvas.getBoundingClientRect();
+                        const width = Math.max(1, rect.width);
+                        const height = Math.max(1, rect.height);
+                        renderer.setSize(width, height, false);
+                        camera.aspect = width / height;
+                        camera.updateProjectionMatrix();
+                    }
+
+                    window.addEventListener("resize", resize, { passive: true });
+                    resize();
+
+                    let lastRenderTime = 0;
+                    const fpsInterval = 1000 / 30;
+                    let isVisible = true;
+                    const observer = new IntersectionObserver((entries) => {
+                        isVisible = entries[0].isIntersecting;
+                    }, { threshold: 0 });
+                    const heroSection = document.querySelector('.hero');
+                    if(heroSection) observer.observe(heroSection);
+
+                    renderer.setAnimationLoop((time) => {
+                        if (!isVisible) return; 
+
+                        const timeElapsed = time - lastRenderTime;
+                        if (timeElapsed < fpsInterval) return; 
+                        lastRenderTime = time - (timeElapsed % fpsInterval);
+
+                        const elapsed = time * 0.0002;
+                        core.rotation.x = elapsed * 0.55;
+                        core.rotation.y = elapsed * 0.8;
+                        ring.rotation.z = elapsed * 0.5;
+
+                        group.position.x += (pointer.x * 0.22 - group.position.x) * 0.025;
+                        group.position.y += (-pointer.y * 0.13 - group.position.y) * 0.025;
+
+                        particles.rotation.y = elapsed * 0.18;
+                        particles.rotation.x = Math.sin(elapsed * 1.8) * 0.08;
+
+                        renderer.render(scene, camera);
+                    });
+                } catch (error) {
+                    console.warn("Three.js disabled:", error);
+                    canvas.remove();
+                }
+            }
+
+            function initEventListeners() {
+                elements.serviceGroups.addEventListener("click", (event) => {
+                    const button = event.target.closest("[data-service-id]");
+                    if (button) openItemModal(button.dataset.serviceId);
+                });
+
+                elements.itemModalOptions.addEventListener("input", updateItemModalPrice);
+                elements.addToBookingButton.addEventListener("click", addCurrentItemToCart);
+
+                elements.cartItems.addEventListener("click", (event) => {
+                    const button = event.target.closest("[data-remove-cart-id]");
+                    if (button) removeCartItem(button.dataset.removeCartId);
+                });
+
+                elements.checkoutButton.addEventListener("click", openCheckout);
+                elements.checkoutForm.addEventListener("submit", (event) => {
+                    event.preventDefault();
+                    processPayment();
+                });
+                elements.successCloseButton.addEventListener("click", closeCheckout);
+
+                document.addEventListener("click", (event) => {
+                    const closeTarget = event.target.closest("[data-close-modal]");
+                    if (closeTarget) closeModalById(closeTarget.dataset.closeModal);
+                });
+
+                document.addEventListener("keydown", (event) => {
+                    if (event.key !== "Escape") return;
+                    if (!elements.itemModal.hidden) closeItemModal();
+                    else if (!elements.checkoutModal.hidden) closeCheckout();
+                    else if (!elements.chatPanel.hidden) toggleChat(false);
+                });
+
+                elements.chatToggleButton.addEventListener("click", () => toggleChat());
+                elements.chatCloseButton.addEventListener("click", () => toggleChat(false));
+                elements.chatSendButton.addEventListener("click", sendChatMessage);
+                elements.chatInput.addEventListener("keydown", (event) => {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        sendChatMessage();
+                    }
+                });
+            }
+
+            function initChat() {
+                appendChatMessage("Hi there! Welcome to Mel's Tasty Bites Canteen online ordering. Ask me about our menu, dietary options, or how to skip the line!");
+            }
+
+            function init() {
+                elements.copyrightYear.textContent = String(new Date().getFullYear());
+                renderServiceMenu();
+                renderTimeSlots();
+                renderCart();
+                initNavigation();
+                initEventListeners();
+                initChat();
+                updateShopStatus();
+                initThreeBackground();
+                window.setInterval(updateShopStatus, 60_000);
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
