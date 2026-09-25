@@ -134,6 +134,7 @@
             border: 1px solid var(--line);
             box-shadow: 0 24px 80px rgba(0, 0, 0, 0.26);
             backdrop-filter: blur(12px);
+            border-radius: 12px;
         }
 
         .section-kicker {
@@ -441,7 +442,8 @@
             <div class="hidden items-center gap-7 md:flex">
                 <a href="#about" class="text-sm font-semibold text-slate-300 transition hover:text-brand">About</a>
                 <a href="#menu" class="text-sm font-semibold text-slate-300 transition hover:text-brand">Menu</a>
-                <a href="#gallery" class="text-sm font-semibold text-slate-300 transition hover:text-brand">Gallery</a>
+                <a href="#networking" class="text-sm font-semibold text-slate-300 transition hover:text-brand">Networking</a>
+                <a href="#terms" class="text-sm font-semibold text-slate-300 transition hover:text-brand">Terms & Conditions</a>
                 <a href="#location" class="text-sm font-semibold text-slate-300 transition hover:text-brand">Location</a>
                 <a href="#menu" class="brand-button rounded-full px-6 py-2.5 font-display text-sm font-bold uppercase tracking-wide">
                     Order Online
@@ -457,7 +459,8 @@
             <div class="flex flex-col gap-1">
                 <a href="#about" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">About</a>
                 <a href="#menu" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">Menu</a>
-                <a href="#gallery" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">Gallery</a>
+                <a href="#networking" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">Networking</a>
+                <a href="#terms" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">Terms & Conditions</a>
                 <a href="#location" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">Location</a>
                 <a href="#menu" class="brand-button mt-2 rounded-lg px-4 py-3 text-center font-display text-sm font-bold uppercase tracking-wide">
                     Order Online
@@ -569,27 +572,22 @@
                 </div>
 
                 <div class="mt-14 grid auto-rows-[200px] grid-cols-2 gap-3 sm:auto-rows-[260px] md:grid-cols-4">
-                    
                     <div class="gallery-tile col-span-2 row-span-2 relative">
                         <img class="food-image absolute inset-0" src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80" alt="Gourmet Burger" loading="lazy">
                         <div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-md text-xs font-bold text-white">Classic Beef Burger</div>
                     </div>
-                    
                     <div class="gallery-tile relative">
                         <img class="food-image absolute inset-0" src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80" alt="Fresh Salad" loading="lazy">
                         <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white">Garden Salad</div>
                     </div>
-
                     <div class="gallery-tile relative">
                         <img class="food-image absolute inset-0" src="https://images.unsplash.com/photo-1626808642875-0aa545482dfb?auto=format&fit=crop&w=400&q=80" alt="Fruit Cup" loading="lazy">
                         <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white">Fresh Fruit</div>
                     </div>
-                    
                     <div class="gallery-tile relative">
                         <img class="food-image absolute inset-0" src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=400&q=80" alt="Sandwich" loading="lazy">
                         <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white">Toasted Sandwiches</div>
                     </div>
-
                     <div class="gallery-tile relative">
                         <img class="food-image absolute inset-0" src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=400&q=80" alt="Sushi Rolls" loading="lazy">
                         <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded-md text-[10px] font-bold text-white">Sushi Rolls</div>
@@ -641,11 +639,6 @@
                             </div>
 
                             <div class="mt-6 space-y-3 border-t border-white/10 pt-5 text-sm">
-                                <div class="flex justify-between gap-4 text-slate-400">
-                                    <span>Subtotal</span>
-                                    <span id="cart-subtotal">$0.00</span>
-                                </div>
-
                                 <div class="flex justify-between gap-4 border-t border-white/10 pt-4 font-display text-xl font-bold text-white">
                                     <span>Total due</span>
                                     <span id="cart-total" class="text-brand">$0.00</span>
@@ -658,6 +651,122 @@
                             </button>
                         </div>
                     </aside>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ==================== NETWORKING & STRIPE BACKEND ==================== -->
+        <section id="networking" class="border-t border-white/10 py-24 sm:py-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                <p class="section-kicker">Network Architecture & Systems</p>
+                <h2 class="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">Networking & Stripe Backend</h2>
+
+                <!-- TCP/IP -->
+                <div class="mt-12 glass p-8">
+                    <h3 class="font-display text-2xl font-bold text-brand">1. TCP/IP Protocol Stack Breakdown</h3>
+                    <p class="mt-2 text-sm text-slate-400">Step-by-step transmission flow when a student completes an order:</p>
+                    
+                    <div class="mt-6 grid gap-4 md:grid-cols-4">
+                        <div class="border border-white/10 bg-white/[0.02] p-4 rounded-lg">
+                            <span class="text-xs font-bold uppercase tracking-wider text-brand">Layer 4: Application</span>
+                            <h4 class="mt-2 font-display text-lg font-bold text-white">HTTP/HTTPS & JSON</h4>
+                            <p class="mt-2 text-xs leading-5 text-slate-400">Browser executes Stripe.js to generate a secure token, packages the order as JSON, and sends an HTTPS POST request to <code class="text-brand">/api/charge</code>.</p>
+                        </div>
+                        <div class="border border-white/10 bg-white/[0.02] p-4 rounded-lg">
+                            <span class="text-xs font-bold uppercase tracking-wider text-brand">Layer 3: Transport</span>
+                            <h4 class="mt-2 font-display text-lg font-bold text-white">TCP Handshake</h4>
+                            <p class="mt-2 text-xs leading-5 text-slate-400">TCP executes a 3-way handshake (SYN, SYN-ACK, ACK) and splits data into sequence-numbered segments to prevent packet loss.</p>
+                        </div>
+                        <div class="border border-white/10 bg-white/[0.02] p-4 rounded-lg">
+                            <span class="text-xs font-bold uppercase tracking-wider text-brand">Layer 2: Internet</span>
+                            <h4 class="mt-2 font-display text-lg font-bold text-white">IP Addressing & Routing</h4>
+                            <p class="mt-2 text-xs leading-5 text-slate-400">IP envelopes TCP segments with source and destination IP headers, routing datagrams across local gateways and network hops.</p>
+                        </div>
+                        <div class="border border-white/10 bg-white/[0.02] p-4 rounded-lg">
+                            <span class="text-xs font-bold uppercase tracking-wider text-brand">Layer 1: Network Access</span>
+                            <h4 class="mt-2 font-display text-lg font-bold text-white">Ethernet / 802.11</h4>
+                            <p class="mt-2 text-xs leading-5 text-slate-400">NIC translates binary packets into physical frame signals (Wi-Fi radio waves or Cat6 electrical voltage) to reach the switch.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transmission Media & Security -->
+                <div class="mt-8 grid gap-8 md:grid-cols-2">
+                    <!-- Transmission Media -->
+                    <div class="glass p-8">
+                        <h3 class="font-display text-2xl font-bold text-white">2. Transmission Media</h3>
+                        
+                        <div class="mt-5 space-y-4 text-sm text-slate-300">
+                            <div class="border-l-2 border-brand pl-4">
+                                <h4 class="font-bold text-brand">Wireless Media (Wi-Fi 802.11 / Cellular)</h4>
+                                <p class="mt-1 text-xs leading-relaxed text-slate-400"><strong>PEEL:</strong> Wireless transmission uses radio frequency (RF) waves through the air without physical cables. When a student places an order on their phone, data is modulated across the 2.4/5 GHz band to a campus WAP. For example, a student in the BHHS library transmits across the school WPA2 network to a ceiling router, offering high mobility and accessibility for canteen pre-ordering.</p>
+                            </div>
+
+                            <div class="border-l-2 border-gold pl-4">
+                                <h4 class="font-bold text-gold">Wired Media (Cat6 Copper & Fibre Optic)</h4>
+                                <p class="mt-1 text-xs leading-relaxed text-slate-400"><strong>PEEL:</strong> Wired transmission media guides physical electrical or light signals down cables. Inside the school, the canteen POS terminal transmits orders over Cat6 twisted-pair copper cables to a switch, then over single-mode fibre optic lines between school buildings. For example, kitchen orders print reliably via Ethernet, providing superior bandwidth, low latency, and immunity to interference during busy lunch breaks.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security & Stripe Payment -->
+                    <div class="glass p-8">
+                        <h3 class="font-display text-2xl font-bold text-white">3. Network & Payment Security</h3>
+                        
+                        <div class="mt-5 space-y-4 text-sm text-slate-300">
+                            <div class="border-l-2 border-brand pl-4">
+                                <h4 class="font-bold text-white">Encryption (HTTPS & Tokenization)</h4>
+                                <p class="mt-1 text-xs leading-relaxed text-slate-400">All data in transit is protected via TLS 1.3 / HTTPS encryption. Credit card data is collected via sandboxed Stripe iframes, tokenizing credentials directly to Stripe's PCI-DSS Level 1 servers. The canteen server never stores or views raw card numbers.</p>
+                            </div>
+
+                            <div class="border-l-2 border-gold pl-4">
+                                <h4 class="font-bold text-white">User Authentication & Validation</h4>
+                                <p class="mt-1 text-xs leading-relaxed text-slate-400">Student input data is validated with client-side checks and regex patterns. Server communications are authorized using protected backend secret keys (<code class="text-brand">sk_test_...</code>) stored strictly server-side.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TERMS & CONDITIONS ==================== -->
+        <section id="terms" class="border-t border-white/10 py-24 sm:py-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                <p class="section-kicker">Compliance, Ethics & Policies</p>
+                <h2 class="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">Terms & Conditions</h2>
+
+                <div class="mt-12 grid gap-8 md:grid-cols-3">
+                    <!-- Privacy -->
+                    <div class="glass p-7">
+                        <div class="service-icon"><i class="fa-solid fa-user-shield"></i></div>
+                        <h3 class="mt-6 font-display text-xl font-bold text-white">Privacy & Digital Footprint</h3>
+                        <ul class="mt-4 space-y-2 text-xs leading-6 text-slate-400">
+                            <li><strong class="text-slate-200">What is collected:</strong> Student name, contact number, pickup time slot, food choices, and allergy notes. No credit card details are ever stored.</li>
+                            <li><strong class="text-slate-200">Why it is collected:</strong> To verify student orders at the counter and ensure correct meal packaging for recess or lunch.</li>
+                            <li><strong class="text-slate-200">Data retention:</strong> Personal order records are retained only for the school day of fulfilment and wiped after 30 days.</li>
+                        </ul>
+                    </div>
+
+                    <!-- IP & Copyright -->
+                    <div class="glass p-7">
+                        <div class="service-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                        <h3 class="mt-6 font-display text-xl font-bold text-white">Intellectual Property & IP</h3>
+                        <ul class="mt-4 space-y-2 text-xs leading-6 text-slate-400">
+                            <li><strong class="text-slate-200">Site Content:</strong> All code, styles, design, and architecture are the student's intellectual property.</li>
+                            <li><strong class="text-slate-200">Image Credits:</strong> Sourced under open Creative Commons from Unsplash/Pexels and official Mel's Tasty Bites canteen photos.</li>
+                            <li><strong class="text-slate-200">ICIP Statement:</strong> "We respect the Indigenous Cultural and Intellectual Property of the traditional owners of the ingredients used in our 'Bush Tucker' range."</li>
+                        </ul>
+                    </div>
+
+                    <!-- Accessibility -->
+                    <div class="glass p-7">
+                        <div class="service-icon"><i class="fa-solid fa-universal-access"></i></div>
+                        <h3 class="mt-6 font-display text-xl font-bold text-white">Accessibility</h3>
+                        <ul class="mt-4 space-y-2 text-xs leading-6 text-slate-400">
+                            <li><strong class="text-slate-200">The Standard:</strong> Designed to satisfy WCAG 2.1 Level AA web standards.</li>
+                            <li><strong class="text-slate-200">The Proof:</strong> Descriptive image alt-text, high-contrast text ratios for readability, ARIA screen-reader labels, and keyboard-tab navigation.</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
@@ -720,15 +829,18 @@
         </section>
     </main>
 
-    <footer class="border-t border-white/10 py-12">
-        <div class="mx-auto flex max-w-7xl flex-col gap-6 px-5 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
-            <div class="flex items-center gap-2 font-display text-lg font-bold">
-                <img src="image_2f4162.png" alt="Mel's Tasty Bites Logo" class="h-6 w-6 object-contain bg-white rounded-full p-0.5">
-                <span class="text-brand">MEL'S TASTY BITES</span>
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="border-t border-white/10 bg-gold py-6 text-slate-900 font-medium">
+        <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 sm:flex-row sm:px-8 lg:px-10 text-sm">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-circle-info text-lg opacity-80"></i>
+                <span class="font-bold">Copyright 2026</span>
             </div>
-            <p class="text-sm text-slate-500">
-                &copy; <span id="copyright-year"></span> Mel's Tasty Bites. Operated at BHHS.
-            </p>
+            <div>
+                <p class="text-center sm:text-right">
+                    We acknowledge the Darug people as the traditional custodians of the land.
+                </p>
+            </div>
         </div>
     </footer>
 
@@ -763,88 +875,92 @@
         <div class="modal-backdrop" data-close-modal="checkout-modal"></div>
 
         <section class="dialog max-w-2xl" role="dialog" aria-modal="true" aria-labelledby="checkout-modal-title">
-            <div class="dialog-header flex items-start justify-between gap-5 border-b px-6 py-5">
-                <div>
-                    <p class="section-kicker">Secure checkout</p>
-                    <h2 id="checkout-modal-title" class="mt-2 font-display text-2xl font-bold text-white">Finalize Order</h2>
+            <!-- CHECKOUT FORM VIEW -->
+            <div id="checkout-form-container">
+                <div class="dialog-header flex items-start justify-between gap-5 border-b px-6 py-5">
+                    <div>
+                        <p class="section-kicker">Secure checkout</p>
+                        <h2 id="checkout-modal-title" class="mt-2 font-display text-2xl font-bold text-white">Finalize Order</h2>
+                    </div>
+                    <button type="button" class="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-white/10 text-slate-400 transition hover:border-brand hover:text-white" data-close-modal="checkout-modal" aria-label="Close checkout">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
-                <button type="button" class="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-white/10 text-slate-400 transition hover:border-brand hover:text-white" data-close-modal="checkout-modal" aria-label="Close checkout">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+
+                <form id="checkout-form" novalidate class="flex flex-1 flex-col min-h-0">
+                    <div class="dialog-body space-y-8 p-6">
+                        <div class="border border-brand/20 bg-brand/5 rounded-lg">
+                            <div class="p-4 text-center">
+                                <p class="text-xs uppercase tracking-wider text-brand/80">Total Order Amount</p>
+                                <p id="checkout-total" class="mt-2 font-display text-3xl font-bold text-brand">$0.00</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="mb-4 flex items-center justify-between gap-4">
+                                <label for="booking-date" class="text-sm font-bold uppercase tracking-wider text-slate-300">1. Pickup Date & Time</label>
+                            </div>
+                            <input id="booking-date" type="date" class="service-input px-4 py-3 [color-scheme:dark]" required>
+                            <div id="time-slots" class="mt-4 grid grid-cols-3 gap-2"></div>
+                            <p id="time-error" class="mt-2 hidden text-xs font-semibold text-red-400"></p>
+                        </div>
+
+                        <div>
+                            <label class="mb-4 block text-sm font-bold uppercase tracking-wider text-slate-300">2. Student Details</label>
+                            <div class="grid gap-3 sm:grid-cols-2">
+                                <div>
+                                    <label for="customer-name" class="sr-only">Full name</label>
+                                    <input id="customer-name" type="text" autocomplete="name" placeholder="Student Full Name" class="service-input px-4 py-3" required>
+                                </div>
+                                <div>
+                                    <label for="customer-phone" class="sr-only">Student ID / Roll Class</label>
+                                    <input id="customer-phone" type="text" placeholder="Roll Class (e.g. 10A)" class="service-input px-4 py-3" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-bold uppercase tracking-wider text-slate-300">3. Secure Payment</label>
+                                <p class="mt-2 text-xs leading-5 text-slate-500">Pay securely online to guarantee your order.</p>
+                            </div>
+                            <div id="card-element" class="stripe-card"></div>
+                            <p id="card-errors" class="mt-2 hidden text-xs font-semibold text-red-400" role="alert"></p>
+                        </div>
+
+                        <div id="checkout-error" class="hidden rounded-lg border-2 border-red-500 bg-red-500/20 p-5 text-sm leading-6 text-white" role="alert"></div>
+                    </div>
+
+                    <div class="dialog-footer border-t p-6">
+                        <button id="pay-button" type="submit" class="brand-button rounded-lg flex w-full items-center justify-center gap-3 px-5 py-4 font-display text-sm font-bold uppercase tracking-wide">
+                            <i class="fa-solid fa-lock text-xs"></i>
+                            Pay <span id="pay-button-amount">$0.00</span>
+                        </button>
+                        <p class="mt-4 text-center text-xs leading-5 text-slate-500">Payments are processed securely by Stripe.</p>
+                    </div>
+                </form>
             </div>
 
-            <form id="checkout-form" novalidate class="flex flex-1 flex-col min-h-0">
-                <div class="dialog-body space-y-8 p-6">
-                    <div class="border border-brand/20 bg-brand/5 rounded-lg">
-                        <div class="p-4 text-center">
-                            <p class="text-xs uppercase tracking-wider text-brand/80">Total Order Amount</p>
-                            <p id="checkout-total" class="mt-2 font-display text-3xl font-bold text-brand">$0.00</p>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="mb-4 flex items-center justify-between gap-4">
-                            <label for="booking-date" class="text-sm font-bold uppercase tracking-wider text-slate-300">1. Pickup Date & Time</label>
-                        </div>
-                        <input id="booking-date" type="date" class="service-input px-4 py-3 [color-scheme:dark]" required>
-                        <div id="time-slots" class="mt-4 grid grid-cols-3 gap-2"></div>
-                        <p id="time-error" class="mt-2 hidden text-xs font-semibold text-red-400"></p>
-                    </div>
-
-                    <div>
-                        <label class="mb-4 block text-sm font-bold uppercase tracking-wider text-slate-300">2. Student Details</label>
-                        <div class="grid gap-3 sm:grid-cols-2">
-                            <div>
-                                <label for="customer-name" class="sr-only">Full name</label>
-                                <input id="customer-name" type="text" autocomplete="name" placeholder="Student Full Name" class="service-input px-4 py-3" required>
-                            </div>
-                            <div>
-                                <label for="customer-phone" class="sr-only">Student ID / Roll Class</label>
-                                <input id="customer-phone" type="text" placeholder="Roll Class (e.g. 10A)" class="service-input px-4 py-3" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-bold uppercase tracking-wider text-slate-300">3. Secure Payment</label>
-                            <p class="mt-2 text-xs leading-5 text-slate-500">Pay securely online to guarantee your order.</p>
-                        </div>
-                        <div id="card-element" class="stripe-card"></div>
-                        <p id="card-errors" class="mt-2 hidden text-xs font-semibold text-red-400" role="alert"></p>
-                    </div>
-
-                    <div id="checkout-error" class="hidden rounded-lg border border-red-400/30 bg-red-400/10 p-4 text-sm leading-6 text-red-200" role="alert"></div>
-                </div>
-
-                <div class="dialog-footer border-t p-6">
-                    <button id="pay-button" type="submit" class="brand-button rounded-lg flex w-full items-center justify-center gap-3 px-5 py-4 font-display text-sm font-bold uppercase tracking-wide">
-                        <i class="fa-solid fa-lock text-xs"></i>
-                        Pay <span id="pay-button-amount">$0.00</span>
-                    </button>
-                    <p class="mt-4 text-center text-xs leading-5 text-slate-500">Payments are processed securely by Stripe.</p>
-                </div>
-            </form>
-
+            <!-- SUCCESS SCREEN VIEW -->
             <div id="checkout-success" hidden class="dialog-body p-8 text-center sm:p-12">
-                <div class="mx-auto grid h-20 w-20 place-items-center rounded-full border border-green-400/30 bg-green-400/10 text-3xl text-green-300">
+                <div class="mx-auto grid h-24 w-24 place-items-center rounded-full border-4 border-green-400/30 bg-green-400/10 text-5xl text-green-400 shadow-[0_0_40px_rgba(74,222,128,0.2)]">
                     <i class="fa-solid fa-check"></i>
                 </div>
                 <p class="section-kicker mt-8" style="color: var(--leaf)">Order Confirmed</p>
-                <h2 class="mt-3 font-display text-3xl font-bold text-white">Your lunch is sorted.</h2>
-                <p class="mx-auto mt-4 max-w-md text-sm leading-7 text-slate-400">We've received your order and payment. Skip the main line and head straight to the pre-order window at your chosen time.</p>
-                <div class="mx-auto mt-8 max-w-md rounded-xl border border-white/10 bg-white/[0.03] p-5 text-left">
+                <h2 class="mt-3 font-display text-4xl font-bold text-white">Your lunch is sorted.</h2>
+                <p class="mx-auto mt-4 max-w-md text-sm leading-7 text-slate-300">We've successfully received your payment! Skip the main line and head straight to the pre-order window at your chosen time.</p>
+                <div class="mx-auto mt-8 max-w-md rounded-xl border border-white/10 bg-white/[0.05] p-6 text-left">
                     <div class="flex justify-between gap-4 text-sm">
-                        <span class="text-slate-500">Pickup</span>
+                        <span class="text-slate-400">Pickup</span>
                         <span id="success-appointment" class="font-semibold text-white"></span>
                     </div>
-                    <div class="mt-3 flex justify-between gap-4 text-sm">
-                        <span class="text-slate-500">Reference</span>
-                        <span id="success-reference" class="font-semibold text-brand"></span>
+                    <div class="mt-4 flex justify-between gap-4 text-sm border-t border-white/10 pt-4">
+                        <span class="text-slate-400">Reference ID</span>
+                        <span id="success-reference" class="font-mono font-semibold text-brand"></span>
                     </div>
                 </div>
-                <button id="success-close-button" type="button" class="ghost-button rounded-lg mt-8 w-full px-5 py-4 font-display text-sm font-bold uppercase tracking-wide">
-                    Close
+                <button id="success-close-button" type="button" class="brand-button rounded-lg mt-10 w-full px-5 py-4 font-display text-sm font-bold uppercase tracking-wide">
+                    Return to menu
                 </button>
             </div>
         </section>
@@ -891,10 +1007,10 @@
         (() => {
             "use strict";
 
-            // Payment connection configuration linked to local backend
+            // CONFIGURATION: Points to the local backend we are running on port 3000
             const CONFIG = {
                 stripePublishableKey: "pk_test_51UEq970ABvmtkKDIa58mliogDMSQhqlIS8PNGpOFvfOfW8jJzRpfUXFjZJBdOo6mGAe090LQRew7nSdtsL4CumDQ00yIQi5Ue2",
-                paymentIntentEndpoint: "http://localhost:3000/api/charge",
+                paymentIntentEndpoint: "http://localhost:3000/api/charge", 
                 currency: "aud"
             };
 
@@ -955,7 +1071,6 @@
                 cartItems: $("#cart-items"),
                 cartEmpty: $("#cart-empty"),
                 cartCount: $("#cart-count"),
-                cartSubtotal: $("#cart-subtotal"),
                 cartTotal: $("#cart-total"),
                 checkoutButton: $("#checkout-button"),
                 itemModal: $("#item-modal"),
@@ -965,6 +1080,7 @@
                 itemModalTotalPrice: $("#item-modal-total-price"),
                 addToBookingButton: $("#add-to-booking-button"),
                 checkoutModal: $("#checkout-modal"),
+                checkoutFormContainer: $("#checkout-form-container"),
                 checkoutForm: $("#checkout-form"),
                 bookingDate: $("#booking-date"),
                 timeSlots: $("#time-slots"),
@@ -985,7 +1101,6 @@
                 mobileMenu: $("#mobile-menu"),
                 shopStatus: $("#shop-status"),
                 shopStatusText: $("#shop-status-text"),
-                copyrightYear: $("#copyright-year"),
                 chatPanel: $("#chat-panel"),
                 chatToggleButton: $("#chat-toggle-button"),
                 chatCloseButton: $("#chat-close-button"),
@@ -1275,8 +1390,6 @@
                 });
             }
 
-            function closeItemModal() { closeModalById("item-modal"); }
-
             function addCurrentItemToCart() {
                 if (!state.currentItem) return;
 
@@ -1296,12 +1409,12 @@
                 });
 
                 renderCart();
-                closeItemModal();
+                closeModalById("item-modal");
                 showToast(`${service.name} added to your order.`);
             }
 
-            function getCartSubtotal() { return state.cart.reduce((total, item) => total + item.price, 0); }
-            function getCartTotal() { return getCartSubtotal(); } // No extra fee for canteen
+            // EXACT TOTAL - No $10 deposit fee
+            function getCartTotal() { return state.cart.reduce((total, item) => total + item.price, 0); }
 
             function renderCartItem(item) {
                 const wrapper = document.createElement("article");
@@ -1351,7 +1464,6 @@
             }
 
             function renderCart() {
-                const subtotal = getCartSubtotal();
                 const total = getCartTotal();
 
                 elements.cartItems.replaceChildren();
@@ -1359,7 +1471,6 @@
 
                 elements.cartEmpty.hidden = state.cart.length > 0;
                 elements.cartCount.textContent = String(state.cart.length);
-                elements.cartSubtotal.textContent = formatMoney(subtotal);
                 elements.cartTotal.textContent = formatMoney(total);
 
                 elements.checkoutButton.disabled = state.cart.length === 0;
@@ -1410,7 +1521,7 @@
 
             function clearCheckoutErrors() {
                 elements.checkoutError.hidden = true;
-                elements.checkoutError.textContent = "";
+                elements.checkoutError.innerHTML = "";
                 elements.cardErrors.hidden = true;
                 elements.cardErrors.textContent = "";
                 elements.timeError.hidden = true;
@@ -1422,9 +1533,15 @@
             }
 
             function showCheckoutError(message) {
-                elements.checkoutError.textContent = message;
+                console.error("❌ CHECKOUT ERROR:", message);
+                elements.checkoutError.innerHTML = `<strong>⚠️ Connection Failed:</strong><br>${message}<br><br><span class="text-xs opacity-75">Check if your backend is running (node server.js)</span>`;
                 elements.checkoutError.hidden = false;
-                elements.checkoutError.scrollIntoView({ block: "nearest", behavior: "smooth" });
+                elements.checkoutError.scrollIntoView({ block: "center", behavior: "smooth" });
+                
+                // Fallback loud alert
+                setTimeout(() => {
+                    alert(`PAYMENT FAILED:\n\n${message}\n\nDid you start your backend server using 'node server.js'?`);
+                }, 100);
             }
 
             function validateCheckout() {
@@ -1438,9 +1555,13 @@
                 if (!date || date < elements.bookingDate.min) { elements.bookingDate.setAttribute("aria-invalid", "true"); valid = false; }
                 if (!selectedTime) { elements.timeError.textContent = "Select a pickup time."; elements.timeError.hidden = false; valid = false; }
                 if (name.length < 2) { elements.customerName.setAttribute("aria-invalid", "true"); valid = false; }
-                if (phone.length < 2) { elements.customerPhone.setAttribute("aria-invalid", "true"); valid = false; } // Simplified for roll class
+                if (phone.length < 2) { elements.customerPhone.setAttribute("aria-invalid", "true"); valid = false; } 
                 
-                if (!valid) showCheckoutError("Please complete all highlighted details above.");
+                if (!valid) {
+                    elements.checkoutError.innerHTML = "<strong>⚠️ Validation Error:</strong> Please complete all highlighted details above.";
+                    elements.checkoutError.hidden = false;
+                    elements.checkoutError.scrollIntoView({ block: "center", behavior: "smooth" });
+                }
                 return valid;
             }
 
@@ -1459,7 +1580,7 @@
                 if (state.stripeCard) return true;
 
                 if (!window.Stripe) {
-                    showCheckoutError("Payment system could not be loaded. Check your network connection.");
+                    showCheckoutError("Stripe library could not be loaded. Check your network connection.");
                     return false;
                 }
 
@@ -1512,7 +1633,7 @@
             }
 
             function resetCheckoutView() {
-                elements.checkoutForm.hidden = false;
+                elements.checkoutFormContainer.hidden = false;
                 elements.checkoutSuccess.hidden = true;
                 elements.checkoutForm.reset();
                 elements.bookingDate.min = getSydneyDateISO();
@@ -1528,11 +1649,13 @@
             }
 
             function showBookingSuccess(paymentIntentId, booking) {
+                console.log("✅ TRIGGERING SUCCESS SCREEN!");
                 state.completedBooking = { paymentIntentId, booking };
+                
                 elements.successAppointment.textContent = `${booking.date} at ${booking.timeLabel}`;
                 elements.successReference.textContent = paymentIntentId ? `#${paymentIntentId.slice(-8).toUpperCase()}` : "Confirmed";
 
-                elements.checkoutForm.hidden = true;
+                elements.checkoutFormContainer.hidden = true;
                 elements.checkoutSuccess.hidden = false;
 
                 state.cart = [];
@@ -1541,7 +1664,11 @@
 
             async function processPayment() {
                 if (state.isProcessingPayment) return;
-                if (state.cart.length === 0 || !validateCheckout()) return;
+                if (state.cart.length === 0) {
+                    alert("Your cart is empty!");
+                    return;
+                }
+                if (!validateCheckout()) return;
 
                 if (!state.stripeCardComplete) {
                     elements.cardErrors.textContent = "Enter complete card details.";
@@ -1552,48 +1679,74 @@
                 state.isProcessingPayment = true;
                 elements.payButton.disabled = true;
                 elements.payButton.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-xs"></i> Processing...`;
+                
+                console.log("--- CHECKOUT STARTED ---");
 
                 try {
                     const booking = getBookingDetails();
+                    console.log("1. Requesting secure token from Stripe...");
+                    
                     const result = await state.stripe.createToken(state.stripeCard);
-                    if (result.error) throw new Error(result.error.message);
+                    
+                    if (result.error) {
+                        console.error("Stripe Token Error:", result.error);
+                        throw new Error(result.error.message);
+                    }
+                    console.log("2. Stripe Token received:", result.token.id);
 
                     const servicesList = state.cart.map(item => item.options.length > 0 ? `${item.name} (${item.options.join(', ')})` : item.name).join(' | ');
                     const paymentDescription = `Canteen Order: ${booking.date} @ ${booking.timeLabel} | Student: ${booking.name} (${booking.phone})`;
 
-                    // Process exact cart amount in cents for the backend
+                    // Instantly charge exact total
                     const amountInCents = Math.round(getCartTotal() * 100);
+                    console.log(`3. Sending charge request to backend (${CONFIG.paymentIntentEndpoint}) for ${amountInCents} cents...`);
 
-                    const response = await fetch(CONFIG.paymentIntentEndpoint, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ 
-                            token: result.token.id,
-                            amount: amountInCents,
-                            currency: CONFIG.currency,
-                            description: paymentDescription,
-                            metadata: {
-                                customer_name: booking.name,
-                                roll_class: booking.phone,
-                                pickup_date: booking.date,
-                                pickup_time: booking.timeLabel,
-                                order_items: servicesList
-                            }
-                        })
-                    });
-
-                    const responseData = await response.json().catch(() => ({}));
-
-                    if (!response.ok || !responseData.success) {
-                        throw new Error(responseData.error || `Payment failed on the server.`);
+                    let response;
+                    try {
+                        response = await fetch(CONFIG.paymentIntentEndpoint, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ 
+                                token: result.token.id,
+                                amount: amountInCents,
+                                currency: CONFIG.currency,
+                                description: paymentDescription,
+                                metadata: {
+                                    customer_name: booking.name,
+                                    roll_class: booking.phone,
+                                    pickup_date: booking.date,
+                                    pickup_time: booking.timeLabel,
+                                    order_items: servicesList
+                                }
+                            })
+                        });
+                    } catch (fetchError) {
+                        console.error("FETCH FAILED:", fetchError);
+                        throw new Error(`Failed to connect to your backend at ${CONFIG.paymentIntentEndpoint}. Is the server running?`);
                     }
 
+                    console.log("4. Backend responded. Status:", response.status);
+                    
+                    let responseData;
+                    try {
+                        responseData = await response.json();
+                    } catch (jsonError) {
+                        throw new Error(`Backend sent an invalid response (Status ${response.status}). Check server console.`);
+                    }
+                    
+                    console.log("5. Backend data:", responseData);
+
+                    if (!response.ok || !responseData.success) {
+                        throw new Error(responseData.error || `Payment failed on the server (Status: ${response.status}).`);
+                    }
+
+                    console.log("6. Payment complete! Proceeding to success screen.");
                     showBookingSuccess(result.token.id, booking);
 
                 } catch (error) {
-                    console.error(error);
-                    showCheckoutError(error.message || "Payment failed. Check your details and try again.");
-                } finally {
+                    console.error("❌ Checkout Error caught in Catch Block:", error);
+                    showCheckoutError(error.message || "An unknown error occurred during checkout.");
+                    
                     state.isProcessingPayment = false;
                     elements.payButton.disabled = false;
                     elements.payButton.innerHTML = `<i class="fa-solid fa-lock text-xs"></i> Pay <span id="pay-button-amount">${formatMoney(getCartTotal())}</span>`;
@@ -1628,51 +1781,19 @@
             function getBotResponse(input) {
                 const str = input.toLowerCase();
                 
-                // Dietary matching
-                if (/(vegan|vegetarian|veg|plant)/i.test(str)) {
-                    return "We have plenty of vegetarian options! Check out the Garden Salad, Veggie Burger (ask staff today), and our fresh fruit snacks. All marked with a 'V' badge.";
-                }
-                if (/(halal)/i.test(str)) {
-                    return "Most of our chicken and meat products, like our Meat Pies, are Halal certified. Please add a note in your order or ask staff to double check specific items.";
-                }
-                if (/(gluten|gf|celiac|coeliac)/i.test(str)) {
-                    return "We offer gluten-friendly options like the Garden Salad and Fresh Fruit (marked GF). Note that our kitchen handles gluten, so we cannot guarantee zero cross-contamination.";
-                }
-                if (/(allergy|nut|dairy|egg)/i.test(str)) {
-                    return "If you have a severe allergy, please add a note in the 'Dietary Requests' box when customizing your item, or speak to Mel directly at the window.";
-                }
+                if (/(vegan|vegetarian|veg|plant)/i.test(str)) return "We have plenty of vegetarian options! Check out the Garden Salad, Veggie Burger (ask staff today), and our fresh fruit snacks. All marked with a 'V' badge.";
+                if (/(halal)/i.test(str)) return "Most of our chicken and meat products, like our Meat Pies, are Halal certified. Please add a note in your order or ask staff to double check specific items.";
+                if (/(gluten|gf|celiac|coeliac)/i.test(str)) return "We offer gluten-friendly options like the Garden Salad and Fresh Fruit (marked GF). Note that our kitchen handles gluten, so we cannot guarantee zero cross-contamination.";
+                if (/(allergy|nut|dairy|egg)/i.test(str)) return "If you have a severe allergy, please add a note in the 'Dietary Requests' box when customizing your item, or speak to Mel directly at the window.";
+                if (/(time|open|close|hour|when)/i.test(str)) return "The canteen is open school days from 8:00 AM. You can order online and select pickup for Before School (8:15 AM), Recess (~10:40 AM), or Lunch (~12:40 PM).";
+                if (/(where|location|find)/i.test(str)) return "We are located at the Canteen Block, Baulkham Hills High School (419A Windsor Rd). Look for the priority window if you've pre-ordered!";
+                if (/(order|pay|card|cash|how to)/i.test(str)) return "You can skip the line by adding items to your bag here, choosing a pickup time, and paying securely with card via Stripe. We also accept cash/card at the physical window.";
+                if (/(late|forgot|change)/i.test(str)) return "Online orders close just before break times. If you missed the cutoff, you'll need to line up at the window.";
+                if (/(burger|hot food|pie)/i.test(str)) return "Our hot food section includes Beef Burgers, Chicken Schnitzel Burgers, Meat Pies, and Pasta. Add them to your bag to see extra options like cheese or sauce!";
+                if (/(drink|water|juice)/i.test(str)) return "We stock Spring Water, Juice Boxes, and Oak Flavored Milk. Scroll down to the Drinks section on the menu.";
+                if (/(price|cost|much)/i.test(str)) return "Prices are listed on the menu. Hot food ranges from $4.00 to $7.00, wraps are around $6.50, and snacks start at $2.50.";
+                if (/(hello|hi|hey|morning)/i.test(str)) return "Hi there! Welcome to Mel's Tasty Bites. Need help finding dietary info, opening times, or how to order?";
 
-                // Logistics & Ordering
-                if (/(time|open|close|hour|when)/i.test(str)) {
-                    return "The canteen is open school days from 8:00 AM. You can order online and select pickup for Before School (8:15 AM), Recess (~10:40 AM), or Lunch (~12:40 PM).";
-                }
-                if (/(where|location|find)/i.test(str)) {
-                    return "We are located at the Canteen Block, Baulkham Hills High School (419A Windsor Rd). Look for the priority window if you've pre-ordered!";
-                }
-                if (/(order|pay|card|cash|how to)/i.test(str)) {
-                    return "You can skip the line by adding items to your bag here, choosing a pickup time, and paying securely with card via Stripe. We also accept cash/card at the physical window.";
-                }
-                if (/(late|forgot|change)/i.test(str)) {
-                    return "Online orders close just before break times. If you missed the cutoff, you'll need to line up at the window.";
-                }
-
-                // Menu specific
-                if (/(burger|hot food|pie)/i.test(str)) {
-                    return "Our hot food section includes Beef Burgers, Chicken Schnitzel Burgers, Meat Pies, and Pasta. Add them to your bag to see extra options like cheese or sauce!";
-                }
-                if (/(drink|water|juice)/i.test(str)) {
-                    return "We stock Spring Water, Juice Boxes, and Oak Flavored Milk. Scroll down to the Drinks section on the menu.";
-                }
-                if (/(price|cost|much)/i.test(str)) {
-                    return "Prices are listed on the menu. Hot food ranges from $4.00 to $7.00, wraps are around $6.50, and snacks start at $2.50.";
-                }
-
-                // Greetings
-                if (/(hello|hi|hey|morning)/i.test(str)) {
-                    return "Hi there! Welcome to Mel's Tasty Bites. Need help finding dietary info, opening times, or how to order?";
-                }
-
-                // Fallback
                 return "I can help with questions about our menu, dietary options (Halal, GF, Veg), opening times, and the online ordering process. What do you need to know?";
             }
 
@@ -1685,7 +1806,7 @@
                 window.setTimeout(() => {
                     elements.chatTyping.hidden = true;
                     appendChatMessage(getBotResponse(text));
-                }, 650 + Math.random() * 400); // Slight random delay for realism
+                }, 650 + Math.random() * 400);
             }
 
             function toggleChat(forceOpen) {
@@ -1721,25 +1842,18 @@
                     const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
                     camera.position.z = 7;
 
-                    const renderer = new THREE.WebGLRenderer({
-                        canvas,
-                        alpha: true,
-                        antialias: false,
-                        powerPreference: "low-power"
-                    });
+                    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: "low-power" });
                     renderer.setPixelRatio(1.0);
                     renderer.setClearColor(0x000000, 0);
 
                     const group = new THREE.Group();
                     scene.add(group);
 
-                    // Changed core to Orange/Red to match food theme
                     const coreGeometry = new THREE.IcosahedronGeometry(2.25, 2);
                     const coreMaterial = new THREE.MeshBasicMaterial({ color: 0xf04e23, wireframe: true, transparent: true, opacity: 0.12 });
                     const core = new THREE.Mesh(coreGeometry, coreMaterial);
                     group.add(core);
 
-                    // Ring to green
                     const ringGeometry = new THREE.TorusGeometry(2.9, 0.008, 8, 160);
                     const ringMaterial = new THREE.MeshBasicMaterial({ color: 0x3b963b, transparent: true, opacity: 0.25 });
                     const ring = new THREE.Mesh(ringGeometry, ringMaterial);
@@ -1760,7 +1874,6 @@
                         positions[index * 3 + 1] = vertical;
                         positions[index * 3 + 2] = Math.sin(angle) * radius;
 
-                        // Warmer food-like particle colors (Orange, Yellow, slightly Green)
                         const hue = Math.random() > 0.7 ? 0.3 : (Math.random() > 0.3 ? 0.05 : 0.1); 
                         color.setHSL(hue, 0.8, 0.5);
                         colors[index * 3] = color.r;
@@ -1878,7 +1991,6 @@
             }
 
             function init() {
-                elements.copyrightYear.textContent = String(new Date().getFullYear());
                 renderServiceMenu();
                 renderTimeSlots();
                 renderCart();
