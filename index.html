@@ -977,7 +977,7 @@
                         <h2 class="font-display text-lg font-bold text-white">Canteen Helper</h2>
                         <p class="mt-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
                             <span class="h-2 w-2 rounded-full bg-green-400"></span>
-                            Online
+                            AI Online
                         </p>
                     </div>
                 </div>
@@ -987,10 +987,10 @@
             </div>
 
             <div id="chat-messages" class="custom-scroll flex h-80 flex-col gap-4 overflow-y-auto p-4"></div>
-            <div id="chat-typing" hidden class="border-t border-white/10 px-4 py-3 text-xs text-brand">Typing...</div>
+            <div id="chat-typing" hidden class="border-t border-white/10 px-4 py-3 text-xs text-brand">AI is typing...</div>
 
             <div class="flex gap-2 border-t border-white/10 bg-ink/60 p-3">
-                <label for="chat-input" class="sr-only">Ask the assistant</label>
+                <label for="chat-input" class="sr-only">Ask the AI assistant</label>
                 <input id="chat-input" type="text" class="service-input min-w-0 px-3 py-2 text-sm" placeholder="Ask about menu, dietary, etc..." autocomplete="off">
                 <button id="chat-send-button" type="button" class="brand-button rounded-lg grid h-11 w-11 shrink-0 place-items-center" aria-label="Send message">
                     <i class="fa-solid fa-paper-plane text-xs"></i>
@@ -1007,7 +1007,7 @@
         (() => {
             "use strict";
 
-            // CONFIGURATION: Points to your new live Vercel backend
+            // CONFIGURATION: Points directly to your Vercel URL
             const CONFIG = {
                 stripePublishableKey: "pk_test_51UEq970ABvmtkKDIa58mliogDMSQhqlIS8PNGpOFvfOfW8jJzRpfUXFjZJBdOo6mGAe090LQRew7nSdtsL4CumDQ00yIQi5Ue2",
                 paymentIntentEndpoint: "https://canteen-alpha-ten.vercel.app/api/charge", 
@@ -1413,7 +1413,7 @@
                 showToast(`${service.name} added to your order.`);
             }
 
-            // EXACT TOTAL - No $10 deposit fee
+            // EXACT TOTAL CHECKOUT
             function getCartTotal() { return state.cart.reduce((total, item) => total + item.price, 0); }
 
             function renderCartItem(item) {
@@ -1534,13 +1534,12 @@
 
             function showCheckoutError(message) {
                 console.error("❌ CHECKOUT ERROR:", message);
-                elements.checkoutError.innerHTML = `<strong>⚠️ Connection Failed:</strong><br>${message}<br><br><span class="text-xs opacity-75">Check if your backend is running (node server.js)</span>`;
+                elements.checkoutError.innerHTML = `<strong>⚠️ Connection Failed:</strong><br>${message}<br><br><span class="text-xs opacity-75">Ensure your Vercel backend is fully deployed.</span>`;
                 elements.checkoutError.hidden = false;
                 elements.checkoutError.scrollIntoView({ block: "center", behavior: "smooth" });
                 
-                // Fallback loud alert
                 setTimeout(() => {
-                    alert(`PAYMENT FAILED:\n\n${message}\n\nDid you start your backend server using 'node server.js'?`);
+                    alert(`PAYMENT FAILED:\n\n${message}\n\nIs your backend deployed successfully to Vercel?`);
                 }, 100);
             }
 
@@ -1722,7 +1721,7 @@
                         });
                     } catch (fetchError) {
                         console.error("FETCH FAILED:", fetchError);
-                        throw new Error(`Failed to connect to your backend at ${CONFIG.paymentIntentEndpoint}. Is the server running?`);
+                        throw new Error(`Failed to connect to your backend at ${CONFIG.paymentIntentEndpoint}. Is your Vercel URL correct?`);
                     }
 
                     console.log("4. Backend responded. Status:", response.status);
@@ -1731,7 +1730,7 @@
                     try {
                         responseData = await response.json();
                     } catch (jsonError) {
-                        throw new Error(`Backend sent an invalid response (Status ${response.status}). Check server console.`);
+                        throw new Error(`Backend sent an invalid response (Status ${response.status}). Check Vercel logs.`);
                     }
                     
                     console.log("5. Backend data:", responseData);
@@ -1778,35 +1777,38 @@
                 elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
             }
 
-            function getBotResponse(input) {
-                const str = input.toLowerCase();
-                
-                if (/(vegan|vegetarian|veg|plant)/i.test(str)) return "We have plenty of vegetarian options! Check out the Garden Salad, Veggie Burger (ask staff today), and our fresh fruit snacks. All marked with a 'V' badge.";
-                if (/(halal)/i.test(str)) return "Most of our chicken and meat products, like our Meat Pies, are Halal certified. Please add a note in your order or ask staff to double check specific items.";
-                if (/(gluten|gf|celiac|coeliac)/i.test(str)) return "We offer gluten-friendly options like the Garden Salad and Fresh Fruit (marked GF). Note that our kitchen handles gluten, so we cannot guarantee zero cross-contamination.";
-                if (/(allergy|nut|dairy|egg)/i.test(str)) return "If you have a severe allergy, please add a note in the 'Dietary Requests' box when customizing your item, or speak to Mel directly at the window.";
-                if (/(time|open|close|hour|when)/i.test(str)) return "The canteen is open school days from 8:00 AM. You can order online and select pickup for Before School (8:15 AM), Recess (~10:40 AM), or Lunch (~12:40 PM).";
-                if (/(where|location|find)/i.test(str)) return "We are located at the Canteen Block, Baulkham Hills High School (419A Windsor Rd). Look for the priority window if you've pre-ordered!";
-                if (/(order|pay|card|cash|how to)/i.test(str)) return "You can skip the line by adding items to your bag here, choosing a pickup time, and paying securely with card via Stripe. We also accept cash/card at the physical window.";
-                if (/(late|forgot|change)/i.test(str)) return "Online orders close just before break times. If you missed the cutoff, you'll need to line up at the window.";
-                if (/(burger|hot food|pie)/i.test(str)) return "Our hot food section includes Beef Burgers, Chicken Schnitzel Burgers, Meat Pies, and Pasta. Add them to your bag to see extra options like cheese or sauce!";
-                if (/(drink|water|juice)/i.test(str)) return "We stock Spring Water, Juice Boxes, and Oak Flavored Milk. Scroll down to the Drinks section on the menu.";
-                if (/(price|cost|much)/i.test(str)) return "Prices are listed on the menu. Hot food ranges from $4.00 to $7.00, wraps are around $6.50, and snacks start at $2.50.";
-                if (/(hello|hi|hey|morning)/i.test(str)) return "Hi there! Welcome to Mel's Tasty Bites. Need help finding dietary info, opening times, or how to order?";
-
-                return "I can help with questions about our menu, dietary options (Halal, GF, Veg), opening times, and the online ordering process. What do you need to know?";
-            }
-
-            function sendChatMessage() {
+            // GEMINI AI INTEGRATION
+            async function sendChatMessage() {
                 const text = elements.chatInput.value.trim();
                 if (!text) return;
+                
                 appendChatMessage(text, true);
                 elements.chatInput.value = "";
                 elements.chatTyping.hidden = false;
-                window.setTimeout(() => {
+
+                try {
+                    // Dynamically generate the chat endpoint from the payment endpoint
+                    const endpoint = CONFIG.paymentIntentEndpoint.replace('/charge', '/chat');
+                    
+                    const response = await fetch(endpoint, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ message: text })
+                    });
+
+                    const data = await response.json();
                     elements.chatTyping.hidden = true;
-                    appendChatMessage(getBotResponse(text));
-                }, 650 + Math.random() * 400);
+
+                    if (data.success && data.reply) {
+                        appendChatMessage(data.reply);
+                    } else {
+                        appendChatMessage("Sorry, I'm having trouble connecting to the kitchen right now!");
+                    }
+                } catch (error) {
+                    elements.chatTyping.hidden = true;
+                    appendChatMessage("Network error. Make sure the backend server is running.");
+                    console.error(error);
+                }
             }
 
             function toggleChat(forceOpen) {
@@ -1987,7 +1989,7 @@
             }
 
             function initChat() {
-                appendChatMessage("Hi there! Welcome to Mel's Tasty Bites Canteen online ordering. Ask me about our menu, dietary options, or how to skip the line!");
+                appendChatMessage("Hi there! I am the new Gemini AI Canteen Helper. Ask me about our menu, dietary options, or how to skip the line!");
             }
 
             function init() {
